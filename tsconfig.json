@@ -12,6 +12,7 @@
         "types": ["vite/client"],
         "paths": {
             "@editor/*": ["./src/CellDL/*"],
+            "@oxigraph/*": ["./src/assets/oxigraph/*"],
             "@renderer/*": ["./src/*"]
         }
     },

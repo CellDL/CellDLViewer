@@ -1,6 +1,6 @@
 /******************************************************************************
 
-CellDL Model Viewer
+CellDL Editor
 
 Copyright (c) 2022 - 2025 David Brooks
 
@@ -18,22 +18,6 @@ limitations under the License.
 
 ******************************************************************************/
 
-import CellDLViewer from '@renderer/components/WrappedViewer.vue'
+export * from './oxigraphStore.ts'
 
-//==============================================================================
-
-export type Theme = 'light' | 'dark' | 'system';
-
-//==============================================================================
-
-export { CellDLViewer }
-export default CellDLViewer
-
-export interface CellDLViewerProps {
-    annotation?: object
-    celldlData: string
-    theme?: Theme
-}
-
-//==============================================================================
 //==============================================================================
