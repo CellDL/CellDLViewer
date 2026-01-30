@@ -21,13 +21,15 @@ limitations under the License.
 import * as vue from 'vue'
 import { useTippy } from "vue-tippy"
 
-import '@renderer/assets/svgContent.css'
+//==============================================================================
 
-import type { CellDLObject } from '@editor/celldlObjects/index'
+import '@viewer/assets/svgContent.css'
+
+import type { CellDLObject } from '@viewer/celldlObjects/index'
+import type { PointLike } from '@viewer/common/points'
+import { round } from '@viewer/utils'
+
 import type { CellDLModel } from './model'
-import { round } from '@editor/utils'
-
-import type { PointLike } from '@renderer/common/points'
 
 //==============================================================================
 

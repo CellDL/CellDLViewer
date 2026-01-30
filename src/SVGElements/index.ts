@@ -18,12 +18,11 @@ limitations under the License.
 
 ******************************************************************************/
 
-import { Point, type PointLike, PointMath } from '@renderer/common/points'
 
-import { CELLDL_CLASS, type CellDLObject } from '@editor/celldlObjects/index'
-import { Bounds, type RestrictedValue } from '@editor/geometry/index'
-import { FixedControlRect } from '@editor/geometry/controls'
-import { Transform } from '@editor/geometry/transforms'
+import { CELLDL_CLASS, type CellDLObject } from '@viewer/celldlObjects/index'
+import { Point, type PointLike, PointMath } from '@viewer/common/points'
+import { Bounds } from '@viewer/geometry/index'
+import { Transform } from '@viewer/geometry/transforms'
 
 //==============================================================================
 

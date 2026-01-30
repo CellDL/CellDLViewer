@@ -25,7 +25,7 @@ import type { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 
 //==============================================================================
 
-import * as common from '@renderer/common/common'
+import * as common from '@viewer/common/common'
 
 const emit = defineEmits([
     'about',

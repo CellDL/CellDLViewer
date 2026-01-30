@@ -18,12 +18,11 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { PointLike } from '@renderer/common/points'
-import type { PropertiesType } from '@renderer/common/types'
-
-import { BoundedElement } from '@editor/SVGElements/boundedelement'
-import type { CellDLSVGElement } from '@editor/SVGElements/index'
-import type { CellDLModel } from '@editor/viewer/model'
+import type { PointLike } from '@viewer/common/points'
+import type { PropertiesType } from '@viewer/common/types'
+import { BoundedElement } from '@viewer/SVGElements/boundedelement'
+import type { CellDLSVGElement } from '@viewer/SVGElements/index'
+import type { CellDLModel } from '@viewer/viewer/model'
 
 //==============================================================================
 

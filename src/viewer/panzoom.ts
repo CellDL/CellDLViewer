@@ -18,12 +18,10 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { Extent } from '@editor/geometry'
 
-import { getViewbox } from '@renderer/common/svgUtils'
-import { Point } from '@renderer/common/points'
-
-import { editGuides } from './editguides'
+import { getViewbox } from '@viewer/common/svgUtils'
+import type { Extent } from '@viewer/geometry'
+import { Point } from '@viewer/common/points'
 
 //==============================================================================
 

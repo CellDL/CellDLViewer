@@ -19,12 +19,10 @@ limitations under the License.
 ******************************************************************************/
 
 
-import type { PointLike } from '@renderer/common/points'
-import { CONNECTION_COLOUR, CONNECTION_WIDTH, CONNECTION_DASH } from '@renderer/common/styling'
-import type { StringProperties } from '@renderer/common/types'
-
-import type { Extent } from '@editor/geometry/index'
-import { lengthToPixels } from '@editor/geometry/units'
+import type { PointLike } from '@viewer/common/points'
+import type { StringProperties } from '@viewer/common/types'
+import type { Extent } from '@viewer/geometry/index'
+import { lengthToPixels } from '@viewer/geometry/units'
 
 //==============================================================================
 

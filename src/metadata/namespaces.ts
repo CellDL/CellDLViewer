@@ -20,7 +20,7 @@ limitations under the License.
 
 import { isNamedNode, namedNode, type NamedNode } from './rdfstore'
 
-import { SVG_URI } from '@renderer/common/svgUtils'
+import { SVG_URI } from '@viewer/common/svgUtils'
 
 //==============================================================================
 

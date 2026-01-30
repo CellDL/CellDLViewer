@@ -67,7 +67,7 @@ import AboutDialog from './dialogs/AboutDialog.vue'
 
 import CellDLViewer from '../../../index'
 
-import * as vueCommon from '@renderer/common/vueCommon'
+import * as vueCommon from '@viewer/common/vueCommon'
 
 //==============================================================================
 

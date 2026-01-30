@@ -18,12 +18,25 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { PointLike } from '@renderer/common/points'
-import { CELLDL_BACKGROUND_CLASS, CellDLStylesheet } from '@renderer/common/styling'
-import { svgCircleElement, SVG_URI, svgRectElement } from '@renderer/common/svgUtils'
-import type { Constructor, StringProperties } from '@renderer/common/types'
+import { CELLDL_CLASS, type CellDLObject } from '@viewer/celldlObjects/index'
+import {
+    CellDLAnnotation,
+    CellDLComponent,
+    CellDLConduit,
+    type CellDLConnectedObject,
+    CellDLConnection,
+    CellDLInterface,
+    CellDLUnconnectedPort
+} from '@viewer/celldlObjects/index.ts'
 
-import * as $rdf from '@renderer/metadata/index'
+import type { PointLike } from '@viewer/common/points'
+import { CELLDL_BACKGROUND_CLASS, CellDLStylesheet } from '@viewer/common/styling'
+import type { Constructor, StringProperties } from '@viewer/common/types'
+
+import type { Bounds, Extent } from '@viewer/geometry/index'
+import { lengthToPixels } from '@viewer/geometry/units'
+
+import * as $rdf from '@viewer/metadata/index'
 import {
     CELLDL,
     CELLDL_DECLARATIONS,
@@ -33,32 +46,9 @@ import {
     type MetadataPropertyValue,
     OWL,
     RDF
-} from '@renderer/metadata/index'
+} from '@viewer/metadata/index'
 
-import type { Bounds, Extent } from '@editor/geometry/index'
-import { lengthToPixels } from '@editor/geometry/units'
-
-import { CELLDL_CLASS, CellDLObject } from '@editor/celldlObjects/index'
-import {
-    CellDLAnnotation,
-    CellDLComponent,
-    CellDLConduit,
-    type CellDLConnectedObject,
-    CellDLConnection,
-    CellDLInterface,
-    CellDLUnconnectedPort
-} from '@editor/celldlObjects/index.ts'
-
-import type { BoundedElement } from '@editor/SVGElements/boundedelement'
-import type { SvgConnection } from '@editor/SVGElements/svgconnection'
-
-import { type CellDLViewer, notifyChanges } from '@editor/viewer/index'
-import { editGuides } from '@editor/viewer/editguides'
-import { type EditorUndoAction, undoRedo } from '@editor/viewer/undoredo'
-
-import type { ObjectTemplate } from '@editor/components/index'
-
-import { componentLibraryPlugin } from '@renderer/plugins/index'
+import { type CellDLViewer, notifyChanges } from '.'
 
 //==============================================================================
 
@@ -78,8 +68,6 @@ function DIAGRAM_METADATA() {
 }
 
 //==============================================================================
-
-const NEW_DIAGRAM_URI = 'file:///tmp/new_file.celldl'
 
 //==============================================================================
 
@@ -112,9 +100,8 @@ export class CellDLModel {
 
     #objects: Map<string, CellDLObject> = new Map()
 
-    constructor(filePath: string, celldlData: string, celldlViewer: CellDLViewer, importSvg: boolean = false) {
+    constructor(celldlData: string, _annotations: object, celldlViewer: CellDLViewer) {
         this.#diagramMetadata = DIAGRAM_METADATA()
-        this.#filePath = filePath
         this.#celldlViewer = celldlViewer
         if (this.#filePath !== '') {
             let documentUri = encodeURI(this.#filePath)
@@ -138,14 +125,10 @@ export class CellDLModel {
         this.#loadConduits()
         this.#loadConnections()
         this.#loadAnnotations()
-        if (this.#imported) {
-            // We want the file to be flagged as modified
-            notifyChanges()
-        }
     }
 
-    async view() {
-        await this.#celldlViewer.viewDiagram(this)
+    async viewModel() {
+        await this.#celldlViewer.viewModel(this)
     }
 
     get metadata(): StringProperties {

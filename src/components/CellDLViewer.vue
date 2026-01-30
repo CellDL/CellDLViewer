@@ -19,13 +19,11 @@ import 'tippy.js/dist/tippy.css'
 
 //==============================================================================
 
-import '@renderer/assets/style.css'
+import '@viewer/assets/style.css'
 
-import * as vueCommon from '@renderer/common/vueCommon'
-
-
-import { CellDLModel } from '@editor/viewer/model'
-import { CellDLViewer } from '@editor/viewer/index'
+import * as vueCommon from '@viewer/common/vueCommon'
+import { CellDLModel } from '@viewer/viewer/model'
+import { CellDLViewer } from '@viewer/viewer/index'
 
 //==============================================================================
 

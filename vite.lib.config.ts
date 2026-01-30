@@ -71,9 +71,8 @@ export default vite.defineConfig({
     resolve: {
         alias: {
             'node-fetch': 'isomorphic-fetch',
-            '@editor': path.resolve(_dirname, 'src/CellDL'),
             '@oxigraph': path.resolve(_dirname, 'src/assets/oxigraph'),
-            '@renderer': path.resolve(_dirname, 'src')
+            '@viewer': path.resolve(_dirname, 'src')
         }
     },
     plugins: [
