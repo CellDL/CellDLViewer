@@ -29,6 +29,9 @@ out
 *.sublime-workspace
 *.tsbuildinfo
 
+# oxigraph
+src/assets/oxigraph
+
 # unplugin-vue-components
 app/components.d.ts
 components.d.ts

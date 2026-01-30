@@ -46,6 +46,7 @@
         "format": "bunx --bun biome format --fix --max-diagnostics=none",
         "format:check": "bunx --bun biome format --max-diagnostics=none",
         "lint": "bunx --bun biome lint --fix --error-on-warnings --max-diagnostics=none",
+        "postinstall": "bash ./scripts/postinstall.sh",
         "start": "bun run build && vite preview",
         "version:new": "bun scripts/version.js"
     },
