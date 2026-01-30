@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "composite": true,
+        "lib": ["dom", "esnext"],
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "noEmit": false,
+        "strictNullChecks": true,
+        "resolveJsonModule": true,
+        "target": "esnext",
+        "types": ["vite/client"],
+        "paths": {
+            "@editor/*": ["./src/CellDL/*"],
+            "@renderer/*": ["./src/*"]
+        }
+    },
+    "extends": "@vue/tsconfig/tsconfig.dom.json",
+    "include": ["**/*.js", "**/*.ts", "**/*.vue", "package.json"]
+}

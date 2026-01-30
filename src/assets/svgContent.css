@@ -1,0 +1,137 @@
+:root {
+    --tooltip-error-background: darkred;
+}
+
+svg {
+    background-color: #eee;
+    user-select: none;
+    /* Element states while editing */
+    --active: #0f8;
+    --highlighted: #05f;
+    --selected: #0df;
+    --active-selected: #0ff;
+    --connection-selected: #f00;
+    --connection-highlighted: #0f8;
+}
+.celldl-background {
+    pointer-events: none;
+}
+.selection-element {
+    fill: none;
+    pointer-events: all;
+    stroke-opacity: 0.8;
+    stroke-width: 3;
+    rx: 8px;
+}
+.control-rectangle.selected {
+    fill: #f00;
+    opacity: 0.4;
+    stroke: #f0f;
+    stroke-width: 3;
+    pointer-events: all;
+}
+
+/* Alignment guides */
+.alignment-grid {
+    stroke: #08f;
+    stroke-width: 0.4;
+    stroke-opacity: 0.3;
+}
+.alignment-guide {
+    stroke: none;
+}
+.alignment-guide.visible {
+    stroke: #08f;
+    stroke-width: 1;
+    stroke-opacity: 0.8;
+}
+
+/* Control points */
+.control-point {
+    fill: #00c;
+    opacity: 0.8;
+    stroke: #00c;
+    stroke-width: 2;
+}
+.control-point.fixed {
+    fill: white;
+}
+#celldl-editor-selection-frame.highlight .control-point {
+    stroke: #00f;
+}
+#celldl-editor-selection-frame.highlight .control-point.active {
+    fill: #88f;
+    opacity: 1;
+}
+
+/* Active, highlighted, and selected objects */
+.active:not(.celldl-Connection) {
+    stroke: var(--active) !important;
+}
+.selected:not(.celldl-Connection) {
+    stroke: var(--selected) !important;
+}
+.highlight:not(.celldl-Connection) {
+    stroke: var(--highlighted) !important;
+}
+.active.selected:not(.celldl-Connection) {
+    stroke: var(--active-selected) !important;
+}
+.selection-rect {
+    fill: #ccc;
+    fill-opacity: 0.2;
+    stroke: black;
+    stroke-width: 0.3;
+    stroke-opacity: 0.4;
+}
+
+/* Components */
+.celldl-Component.editor {
+    pointer-events: all;
+}
+
+/* Conduits */
+.selection-element.conduit {
+    opacity: 0.5;
+}
+.active + .conduit {
+    fill: var(--active);
+}
+.highlight + .conduit {
+    fill: var(--highlighted);
+}
+.active.selected + .conduit {
+    fill: var(--active-selected) !important;
+}
+
+/* Interfaces */
+.celldl-InterfacePort .selection-element.selected {
+    stroke: var(--connection-selected);
+}
+.celldl-InterfacePort.highlight {
+    fill: var(--highlighted) !important;
+}
+
+/* Connections */
+.celldl-Connection .selection-element.highlight {
+    stroke: var(--connection-highlighted) !important;
+}
+.celldl-Connection.active,
+.celldl-Connection.highlight,
+.celldl-Connection.selected {
+    opacity: 0.7;
+}
+
+.error {
+    color: yellow;
+    opacity: 1;
+    stroke: yellow;
+    stroke-opacity: 1;
+}
+
+.tooltip-error > .tippy-box {
+    background-color: var(--tooltip-error-background);
+}
+.tooltip-error > .tippy-box > .tippy-arrow {
+    color: var(--tooltip-error-background);
+}
