@@ -4,5 +4,3 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
-
-@import './icons.css'
