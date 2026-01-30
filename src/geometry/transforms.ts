@@ -26,7 +26,7 @@ import {
     identity,
     inverse,
     type Matrix,
-    toString,
+    toString as transformToString,
     translate
 } from 'transformation-matrix'
 
@@ -64,12 +64,10 @@ export class NormalTransform {
     }
 
     normalise(point: PointLike): Point {
-        //================================
         return Point.fromPoint(applyToPoint(this.#matrix, point))
     }
 
     invert(point: PointLike): Point {
-        //=============================
         return Point.fromPoint(applyToPoint(this.#inverse, point))
     }
 }
@@ -84,7 +82,6 @@ export class Transform {
     }
 
     static fromString(matrix: string): Transform {
-        //==========================================
         if (matrix === '' || matrix === 'none') {
             return new Transform(identity())
         } else {
@@ -93,42 +90,34 @@ export class Transform {
     }
 
     static Identity(): Transform {
-        //==========================
         return new Transform(identity())
     }
 
     get isIdentity(): boolean {
-        //=======================
-        return toString(this.#matrix) === toString(identity())
+        return transformToString(this.#matrix) === transformToString(identity())
     }
 
     inverse(): Transform {
-        //==================
         return new Transform(inverse(this.#matrix))
     }
 
     leftMultiply(transform: Transform): Transform {
-        //===========================================
         return new Transform(compose([transform.#matrix, this.#matrix]))
     }
 
     toString(): string {
-        //================
-        return toString(this.#matrix)
+        return transformToString(this.#matrix)
     }
 
     transformPoint(point: PointLike): Point {
-        //=====================================
         return Point.fromPoint(applyToPoint(this.#matrix, point))
     }
 
     transformPoints(points: PointLike[]): Point[] {
-        //===========================================
         return applyToPoints(this.#matrix, points).map((pt) => Point.fromPoint(pt))
     }
 
     static Translate(tx: number, ty: number): Transform {
-        //=================================================
         return new Transform(translate(tx, ty))
     }
 }
