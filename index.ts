@@ -30,12 +30,23 @@ export { CellDLViewer }
 export default CellDLViewer
 
 export type AnnotationValue = string|number|boolean|object
-export type Annotations = Record<string, AnnotationValue>
+export type Annotation = Record<string, AnnotationValue>
+
+export type Annotations = Record<string, Annotation>
+
 
 export interface CellDLViewerProps {
     annotations?: Annotations
     celldlData: string
     theme?: Theme
+}
+
+export type ViewerEvent = {
+    type: string
+    component?: {
+        id: string
+        annotation?: Annotation
+    }
 }
 
 //==============================================================================

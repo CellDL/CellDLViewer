@@ -45,7 +45,7 @@ import {
 
 import type { CellDLViewer } from '.'
 
-import type { Annotations, AnnotationValue } from '../../index'
+import type { Annotations, Annotation, ViewerEvent } from '../../index'
 
 //==============================================================================
 //==============================================================================
@@ -81,21 +81,22 @@ export class CellDLModel {
     #diagramMetadata: Record<string, NamedNode>
     #diagramProperties: StringProperties = {}
 
-    #annotations: Map<string, AnnotationValue> = new Map()
+    #annotations: Map<string, Annotation> = new Map()
     #objects: Map<string, CellDLObject> = new Map()
 
-    constructor(celldlData: string, annotations: Annotations, celldlViewer: CellDLViewer) {
         this.#diagramMetadata = DIAGRAM_METADATA()
+    constructor(celldlViewer: CellDLViewer, celldlData: string='', annotations: Annotations={}) {
         this.#celldlViewer = celldlViewer
         this.#documentNode = $rdf.namedNode(VIEWER_DIAGRAM_URI)
         this.#documentNS = new $rdf.Namespace(`${VIEWER_DIAGRAM_URI}#`)
         if (celldlData !== '') {
             this.#loadSvgDiagram(celldlData)
             this.#loadMetadata()
-            for (const objectId of this.#objects.keys()) {
-                if (objectId in annotations) {
+            for (const object of this.#objects.values()) {
+                if (object.id in annotations) {
                     // @ts-expect-error: objectId is in annotations
-                    this.#annotations.set(objectId, annotations[objectId])
+                    const annotation: Annotation = annotations[object.id]
+                    this.#annotations.set(object.id, annotation)
                 }
             }
         }
@@ -116,6 +117,25 @@ export class CellDLModel {
         } else {
             this.#celldlViewer.closeDiagram()
         }
+    }
+
+    viewerEvent(type: string, object: CellDLObject|undefined=undefined) {
+        const eventDetail: ViewerEvent = {
+            type: type
+        }
+        if (object) {
+            eventDetail.component = {
+                id: object.id
+            }
+            if (this.#annotations.has(object.id)) {
+                eventDetail.component.annotation = this.#annotations.get(object.id)
+            }
+        }
+        document.dispatchEvent(
+            new CustomEvent('viewer-event', {
+                detail: eventDetail
+            })
+        )
     }
 
     get rdfStore() {

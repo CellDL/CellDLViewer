@@ -14,6 +14,7 @@
                 :celldlData="celldlData"
                 :theme="theme"
                 @error="onError"
+                @event="onEvent"
             )
             AboutDialog(
                 v-model:visible="aboutVisible"
@@ -36,8 +37,7 @@ import '../assets/app.css'
 import AboutDialog from './AboutDialog.vue'
 
 import CellDLViewer from '../../../index'
-
-import type { Annotations, Theme } from '../../../index'
+import type { Annotations, Theme, ViewerEvent } from '../../../index'
 
 import * as vueCommon from '@viewer/common/vueCommon'
 
@@ -99,12 +99,6 @@ const haveFile = vue.ref<boolean>(false)
 
 //==============================================================================
 
-function onError(msg: string) {
-    window.alert(msg)
-}
-
-//==============================================================================
-
 async function onOpenFile() {
     const options = {
         excludeAcceptAllOption: true,
@@ -151,6 +145,15 @@ function onAboutMenu(): void {
 }
 
 //==============================================================================
-//==============================================================================
 
+function onError(msg: string) {
+    window.alert(msg)
+}
+
+function onEvent(detail: ViewerEvent) {
+    console.log(detail)
+}
+
+//==============================================================================
+//==============================================================================
 </script>

@@ -224,6 +224,12 @@ export class CellDLViewer {
         }
     }
 
+    #emitModelEvent(type: string, object: CellDLObject|undefined=undefined) {
+        if (this.#celldlModel) {
+            this.#celldlModel.viewerEvent(type, object)
+        }
+    }
+
     #activateObject(object: CellDLObject, active: boolean) {
         object.activate(active)
     }
@@ -232,6 +238,7 @@ export class CellDLViewer {
         if (activeObject && this.#activeObject !== activeObject) {
             this.#activateObject(activeObject, true)
             this.#activeObject = activeObject
+            this.#emitModelEvent('active', activeObject)
         }
     }
 
@@ -239,6 +246,7 @@ export class CellDLViewer {
         if (this.#activeObject) {
             this.#activateObject(this.#activeObject, false)
             this.#activeObject = null
+            this.#emitModelEvent('unactive')
         }
     }
 
@@ -247,11 +255,13 @@ export class CellDLViewer {
         if (selectedObject !== null) {
             selectedObject.select(true)
             this.#selectedObject = selectedObject
+            this.#emitModelEvent('select', selectedObject)
         }
     }
 
     #unsetSelectedObject() {
         if (this.#selectedObject) {
+            this.#emitModelEvent('unselect', this.#selectedObject)
             this.#selectedObject.select(false)
             this.#selectedObject = null
         }

@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 import * as vue from 'vue'
+import * as vueusecore from '@vueuse/core'
 
 import primeVueAuraTheme from '@primeuix/themes/aura'
 import primeVueConfig from 'primevue/config'
@@ -23,7 +24,7 @@ import { CellDLViewer } from '@viewer/viewer'
 
 //==============================================================================
 
-import type { CellDLViewerProps } from '../../index'
+import type { CellDLViewerProps, ViewerEvent } from '../../index'
 
 const props = defineProps<CellDLViewerProps>()
 
@@ -85,6 +86,7 @@ const celldlViewer: CellDLViewer = new CellDLViewer()
 
 const emit = defineEmits<{
     'error': [msg: string]
+    'event': [detail: ViewerEvent]
 }>()
 
 //==============================================================================
@@ -93,11 +95,11 @@ vue.watch(
     () => props.celldlData,
     async () => {
         if (props.celldlData === '') {
-            celldlModel = new CellDLModel('', {}, celldlViewer)
+            celldlModel = new CellDLModel(celldlViewer)
             await celldlModel.viewModel()
         } else {
             try {
-                celldlModel = new CellDLModel(props.celldlData, props.annotations || {}, celldlViewer)
+                celldlModel = new CellDLModel(celldlViewer, props.celldlData, props.annotations || {})
                 await celldlModel.viewModel()
             } catch(err) {
                 emit('error', `Invalid CellDL file... (${err})`)
@@ -114,10 +116,16 @@ vue.onMounted(async () => {
         celldlViewer.mount(svgContent.value)
 
         // Create a new model in the viewer's window
-        celldlModel = new CellDLModel('', {}, celldlViewer)
+        celldlModel = new CellDLModel(celldlViewer)
 
         await celldlModel.viewModel()
     }
+})
+
+//==============================================================================
+
+vueusecore.useEventListener(document, 'viewer-event', (event: CustomEvent) => {
+    emit('event', event.detail)
 })
 
 //==============================================================================

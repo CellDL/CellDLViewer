@@ -4,13 +4,14 @@
         :celldlData="celldlData"
         :theme="theme"
         @error="onError"
+        @event="onEvent"
     )
 </template>
 
 <script setup lang="ts">
 import * as vue from 'vue'
 
-import type { CellDLViewerProps } from '../../index'
+import type { CellDLViewerProps, ViewerEvent } from '../../index'
 
 const props = defineProps<CellDLViewerProps>()
 
@@ -27,9 +28,14 @@ const CellDLViewer = vue.defineAsyncComponent(async () => {
 
 const emit = defineEmits<{
     'error': [msg: string]
+    'event': [detail: ViewerEvent]
 }>()
 
 function onError(msg: string) {
     emit('error', msg)
+}
+
+function onEvent(detail: ViewerEvent) {
+    emit('event', detail)
 }
 </script>
