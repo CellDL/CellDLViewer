@@ -224,10 +224,6 @@ export class CellDLViewer {
         }
     }
 
-    #domToSvgCoords(domCoords: PointLike): DOMPoint {
-        return this.#celldlModel!.domToSvgCoords(domCoords)
-    }
-
     #activateObject(object: CellDLObject, active: boolean) {
         object.activate(active)
     }
@@ -259,12 +255,6 @@ export class CellDLViewer {
             this.#selectedObject.select(false)
             this.#selectedObject = null
         }
-    }
-
-    #objectClickEvent(event: Event) {
-        const detail = (<CustomEvent>event).detail
-        const clickedObject: CellDLObject = detail.clickedObject
-        this.#selectionClickEvent(detail.event, clickedObject.svgElement!, clickedObject)
     }
 
     #pointerClickEvent(event: MouseEvent) {
