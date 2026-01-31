@@ -29,17 +29,15 @@ import {
     CellDLUnconnectedPort
 } from '@viewer/celldlObjects'
 
-import type { Constructor, StringProperties } from '@viewer/common/types'
+import type { Constructor } from '@viewer/common/types'
 
 import { lengthToPixels } from '@viewer/geometry/units'
 
 import * as $rdf from '@viewer/metadata'
 import {
     CELLDL,
-    DCT,
     type NamedNode,
     type MetadataPropertyValue,
-    OWL,
     RDF
 } from '@viewer/metadata'
 
@@ -48,19 +46,6 @@ import type { CellDLViewer } from '.'
 import type { Annotations, Annotation, ViewerEvent } from '../../index'
 
 //==============================================================================
-//==============================================================================
-
-function DIAGRAM_METADATA() {
-    return {
-        author: DCT.uri('creator'),
-        created: DCT.uri('created'),
-        description: DCT.uri('description'),
-        modified: DCT.uri('modified'),
-        title: DCT.uri('title'),
-        celldlVersion: OWL.uri('versionInfo')
-    }
-}
-
 //==============================================================================
 
 const CELLDL_METADATA_ID = 'celldl-rdf-metadata'
@@ -78,13 +63,9 @@ export class CellDLModel {
     #documentNode: NamedNode
     #documentNS: $rdf.Namespace
 
-    #diagramMetadata: Record<string, NamedNode>
-    #diagramProperties: StringProperties = {}
-
     #annotations: Map<string, Annotation> = new Map()
     #objects: Map<string, CellDLObject> = new Map()
 
-        this.#diagramMetadata = DIAGRAM_METADATA()
     constructor(celldlViewer: CellDLViewer, celldlData: string='', annotations: Annotations={}) {
         this.#celldlViewer = celldlViewer
         this.#documentNode = $rdf.namedNode(VIEWER_DIAGRAM_URI)

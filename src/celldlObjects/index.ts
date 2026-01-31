@@ -50,9 +50,6 @@ export class CellDLObject {
     #celldlSvgElement: CellDLSVGElement|undefined
     #celldlType: NamedNode
 
-    #label: string | null = null
-    #name: string = ''
-    #moveable: boolean = false
 
     constructor(
         public readonly uri: NamedNode,
@@ -130,18 +127,6 @@ export class CellDLObject {
         return this.celldlClassName === CELLDL_CLASS.Interface
     }
 
-    get label() {
-        return this.#label
-    }
-
-    get moveable() {
-        return this.#moveable
-    }
-
-    get name() {
-        return this.#name
-    }
-
     get selected() {
         return this.#celldlSvgElement?.selected
     }
@@ -160,10 +145,6 @@ export class CellDLObject {
 
     select(selected = true) {
         this.#celldlSvgElement?.select(selected)
-    }
-
-    setName(name: string) {
-        this.#name = name
     }
 
     assignSvgElement(_svgElement: SVGGraphicsElement) {
