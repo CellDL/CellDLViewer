@@ -21,29 +21,29 @@ limitations under the License.
 export {
     blankNode,
     isBlankNode,
-    literal,
     isLiteral,
-    namedNode,
     isNamedNode,
-    TurtleContentType,
-    RdfStore
-} from './rdfstore.ts'
+    literal,
+    namedNode,
+    RdfStore,
+    TurtleContentType
+} from './rdfstore'
 
 export type {
     BlankNode,
+    ContentType,
     Literal,
     NamedNode,
+    ObjectType,
+    PredicateType,
     Statement,
     SubjectType,
-    PredicateType,
-    ObjectType,
-    ContentType,
     Term
-} from './rdfstore.ts'
+} from './rdfstore'
 
-export type { PredicateValue } from './store.ts'
+export type { PredicateValue } from './store'
 
-export * from './namespaces.ts'
+export * from './namespaces'
 
 //==============================================================================
 

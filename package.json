@@ -57,6 +57,7 @@
     },
     "dependencies": {
         "@atomic-ehr/ucum": "^0.2.5",
+        "@jeswr/pretty-turtle": "^1.8.2",
         "@primeuix/themes": "^2.0.2",
         "@primevue/auto-import-resolver": "4.2.5",
         "@vueuse/core": "14.1.0",

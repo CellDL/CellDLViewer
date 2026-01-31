@@ -212,6 +212,27 @@ export class CellDLModel {
         this.#svgDiagram = svgDiagram
     }
 
+    #loadMetadata() {
+        const metadataElement = this.#svgDiagram!.getElementById(CELLDL_METADATA_ID) as SVGMetadataElement
+        if (
+            metadataElement &&
+            (!('contentType' in metadataElement.dataset) || metadataElement.dataset.contentType === $rdf.TurtleContentType)
+        ) {
+            const childNodes = metadataElement.childNodes
+            for (let index = 0; index < childNodes.length; ++index) {
+                // biome-ignore lint/style/noNonNullAssertion: index is in range
+                const childNode = childNodes[index]!
+                if (childNode.nodeName === '#cdata-section') {
+                    this.#kb.load(this.#documentNode.uri, (<CDATASection>childNode).data, $rdf.TurtleContentType)
+                    break
+                }
+            }
+        }
+        if (!this.#kb.contains(this.#documentNode, RDF.uri('type'), CELLDL.uri('Document'))) {
+            throw new Error("Metadata doesn't describe a valid CellDL document")
+        }
+    }
+
     #setObjectSvgElement(celldlObject: CellDLObject): boolean {
         const svgElement = <SVGGraphicsElement>this.#svgDiagram.getElementById(celldlObject.id)
         if (svgElement) {
@@ -258,6 +279,7 @@ export class CellDLModel {
     }
 
     getConnector(connectorNode: MetadataPropertyValue | null): CellDLConnectedObject | null {
+        // @ts-expect-error: `value` property exists on a NamedNode
         if (connectorNode && $rdf.isNamedNode(connectorNode) && connectorNode.value.startsWith(this.#documentNode.value)) {
             const connectorId = (<NamedNode>connectorNode).id()
             const connector = this.#objects.get(connectorId) as CellDLConnectedObject

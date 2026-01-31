@@ -28,9 +28,9 @@ import {
     type ContentType,
     type NamedNode,
     type Statement
-} from './index'
+} from '.'
 
-import type { SubjectType, PredicateType, ObjectType } from './index'
+import type { SubjectType, PredicateType, ObjectType } from '.'
 
 //==============================================================================
 

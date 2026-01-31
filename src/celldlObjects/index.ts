@@ -20,6 +20,7 @@ limitations under the License.
 
 import type { PointLike } from '@viewer/common/points'
 import type { PropertiesType } from '@viewer/common/types'
+import { CELLDL, type NamedNode } from '@viewer/metadata'
 import { BoundedElement } from '@viewer/SVGElements/boundedelement'
 import type { CellDLSVGElement } from '@viewer/SVGElements/index'
 import type { CellDLModel } from '@viewer/viewer/model'
@@ -48,14 +49,14 @@ export class CellDLObject {
     #celldlClassName: CELLDL_CLASS
     #celldlModel: CellDLModel
     #celldlSvgElement: CellDLSVGElement|undefined
-    #celldlType: string
+    #celldlType: NamedNode
 
     #label: string | null = null
     #name: string = ''
     #moveable: boolean = false
 
     constructor(
-        public readonly uri: string,
+        public readonly uri: NamedNode,
         readonly options: PropertiesType = {},
         celldlModel: CellDLModel
     ) {
@@ -90,11 +91,11 @@ export class CellDLObject {
     }
 
     get id(): string {
-        return this.uri   // Or return fragment identifier
+        return this.uri.id()
     }
 
-    isA(type: string) {
-        return type === this.#celldlType
+    isA(rdfType: NamedNode) {
+        return this.#celldlType.equals(rdfType) // || this.#metadataProperties.isA(rdfType)
     }
 
     get isAlignable() {
