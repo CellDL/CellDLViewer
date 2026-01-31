@@ -64,7 +64,7 @@ import primeVueConfig from 'primevue/config'
 
 import '../assets/app.css'
 
-import AboutDialog from './dialogs/AboutDialog.vue'
+import AboutDialog from './AboutDialog.vue'
 
 import CellDLViewer from '../../../index'
 

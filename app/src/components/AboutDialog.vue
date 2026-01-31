@@ -12,5 +12,5 @@
 <script setup lang="ts">
 defineEmits<(event: 'close') => void>()
 
-import { version } from '../../package.json'
+import { version } from '../../../package.json'
 </script>
