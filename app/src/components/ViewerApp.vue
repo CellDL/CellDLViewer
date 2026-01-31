@@ -11,22 +11,15 @@
             .flex
                 MainMenu(
                     :haveFile="haveFile"
-                    :fileModified="fileModified"
-                    :editorState="editorState"
-                    :noPython="noPython"
-                    :viewState="viewState"
                     @about="onAboutMenu"
-                    @edit-action="onEditAction"
-                    @export-action="onExportAction"
-                    @file-action="onFileAction"
-                    @view-action="onViewAction"
+                    @open-file="onOpenFile"
+                    @close-file="onCloseFile"
                 )
                 div.flex-grow.text-center.font-bold {{ windowTitle }}
             ConfirmDialog
-            CellDLEditor.grow(
-                :editorCommand="editorCommand"
-                @editorData="onEditorData"
+            CellDLViewer.grow(
                 :annotation="annotation"
+                :celldlData="celldlData"
                 @error="onError"
             )
             AboutDialog(
@@ -123,10 +116,12 @@ if (props.theme !== undefined) {
 const annotation = vue.ref<Annotation>({})
 
 const windowTitle = vue.ref<string>('New file')
+const celldlData = vue.ref<string>('')
 
-let currentFileHandle: FileSystemFileHandle|undefined
 
 //==============================================================================
+let currentFileHandle: FileSystemFileHandle|undefined
+const haveFile = vue.ref<boolean>(false)
 
 //==============================================================================
 
@@ -135,43 +130,8 @@ function onError(msg: string) {
 }
 
 //==============================================================================
-//==============================================================================
-
-async function onFileAction(action: string) {
-    if (action === 'open') {
-        await onOpenFile()
-    } else if (action === 'close') {
-        await onCloseFile()
-    }
-}
-
-//==============================================================================
-//==============================================================================
 
 async function onOpenFile() {
-    if (!fileStatus.value.modified) {
-        await openFile()
-    } else {
-        confirm.require({
-            message: 'Overwrite modified file?',
-            header: 'Confirmation',
-            icon: 'pi pi-exclamation-triangle',
-            rejectProps: {
-                label: 'Cancel',
-                severity: 'secondary',
-                outlined: true
-            },
-            acceptProps: {
-                label: 'Open'
-            },
-            accept: async () => {
-                await openFile()
-            }
-        })
-    }
-}
-
-async function openFile() {
     const options = {
         excludeAcceptAllOption: true,
         types: [
@@ -189,15 +149,8 @@ async function openFile() {
         if (currentFileHandle) {
             const file = await currentFileHandle.getFile()
             const contents = await file.text()
-            editorCommand.value = {
-                command: 'file',
-                options: {
-                    action: 'open',
-                    data: contents,
-                    name: currentFileHandle.name
-                }
-            }
-            fileStatus.value.haveData = true
+            celldlData.value = contents
+            haveFile.value = true
             windowTitle.value = currentFileHandle.name
         }
     }
@@ -206,15 +159,10 @@ async function openFile() {
 //==============================================================================
 
 function onCloseFile() {
-    editorCommand.value = {
-        command: 'file',
-        options: {
-            action: 'close'
-        }
-    }
     currentFileHandle = undefined
-    fileStatus.value.haveData = false
-    windowTitle.value = 'New file'
+    celldlData.value = ''
+    haveFile.value = false
+    windowTitle.value = ''
 }
 
 //==============================================================================

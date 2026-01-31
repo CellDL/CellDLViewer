@@ -21,22 +21,25 @@ import * as vue from 'vue'
 import * as vueusecore from '@vueuse/core'
 
 import type Menubar from 'primevue/menubar'
-import type { MenuItem, MenuItemCommandEvent } from 'primevue/menuitem'
 
 //==============================================================================
 
 import * as common from '@viewer/common/common'
-
-const emit = defineEmits([
-    'about',
-    'file-action',
-])
 
 const isWindowsOrLinux = common.isWindows() || common.isLinux()
 const isMacOs = common.isMacOs()
 
 //==============================================================================
 
+const props = defineProps<{
+    haveFile: boolean
+}>()
+
+const emit = defineEmits([
+    'about',
+    'open-file',
+    'close-file'
+])
 
 //==============================================================================
 //==============================================================================
@@ -49,15 +52,16 @@ const menuItems = [
                 label: 'Open...',
                 shortcut: isWindowsOrLinux ? 'Ctrl+O' : isMacOs ? '⌘O' : undefined,
                 command: () => {
-                    emit('file-action', 'open')
+                    emit('open-file')
                 }
             },
             {
                 label: 'Close',
                 shortcut: isWindowsOrLinux ? 'Ctrl+W' : isMacOs ? '⌘W' : undefined,
                 command: () => {
-                    emit('file-action', 'close')
-                }
+                    emit('close-file')
+                },
+                disabled: () => !props.haveFile
             }
         ]
     },
@@ -96,10 +100,10 @@ if (common.isDesktop()) {
     vueusecore.onKeyStroke((event: KeyboardEvent) => {
         if (common.isCtrlOrCmd(event) && !event.shiftKey && event.code === 'KeyW') {
             event.preventDefault()
-            emit('file-action', 'close')
+            emit('close-file')
         } else if (common.isCtrlOrCmd(event) && !event.shiftKey && event.code === 'KeyO') {
             event.preventDefault()
-            emit('file-action', 'open')
+            emit('open-file')
         }
     })
 }
