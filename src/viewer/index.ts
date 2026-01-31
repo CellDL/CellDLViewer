@@ -337,14 +337,10 @@ export class CellDLViewer {
     #pointerDownEvent(event: PointerEvent) {
         this.#pointerMoved = false
         this.#pointerDownTime = Date.now()
-        const element = event.target as SVGGraphicsElement
-        if (event.button === 2 || (!event.shiftKey && this.#notDiagramElement(element))) {
-            this.#svgDiagram?.style.removeProperty('cursor')
-            this.#container?.style.setProperty('cursor', 'grab')
-            this.#panzoom!.pointerDown(event)
-            this.#panning = true
-            return
-        }
+        this.#svgDiagram?.style.removeProperty('cursor')
+        this.#container?.style.setProperty('cursor', 'grab')
+        this.#panzoom!.pointerDown(event)
+        this.#panning = true
     }
 
     #pointerMoveEvent(event: PointerEvent) {
