@@ -26,6 +26,7 @@
             CellDLEditor.grow(
                 :editorCommand="editorCommand"
                 @editorData="onEditorData"
+                :annotation="annotation"
                 @error="onError"
             )
             AboutDialog(
@@ -66,6 +67,8 @@ import '../assets/app.css'
 import AboutDialog from './dialogs/AboutDialog.vue'
 
 import CellDLViewer from '../../../index'
+
+import type { Annotation } from '../../../index'
 
 import * as vueCommon from '@viewer/common/vueCommon'
 
@@ -117,6 +120,7 @@ if (props.theme !== undefined) {
 //==============================================================================
 
 //==============================================================================
+const annotation = vue.ref<Annotation>({})
 
 const windowTitle = vue.ref<string>('New file')
 

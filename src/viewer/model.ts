@@ -53,6 +53,7 @@ import { type CellDLViewer, notifyChanges } from '.'
 //==============================================================================
 
 export const CELLDL_VERSION = '1.0'
+import type { Annotation } from '../../index'
 
 //==============================================================================
 
@@ -100,7 +101,7 @@ export class CellDLModel {
 
     #objects: Map<string, CellDLObject> = new Map()
 
-    constructor(celldlData: string, _annotations: object, celldlViewer: CellDLViewer) {
+    constructor(celldlData: string, _annotation: Annotation|undefined, celldlViewer: CellDLViewer) {
         this.#diagramMetadata = DIAGRAM_METADATA()
         this.#celldlViewer = celldlViewer
         if (this.#filePath !== '') {
