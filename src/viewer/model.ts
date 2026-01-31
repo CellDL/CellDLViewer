@@ -46,7 +46,7 @@ import {
 
 import { type CellDLViewer, notifyChanges } from '.'
 
-import type { Annotation } from '../../index'
+import type { Annotations, AnnotationValue } from '../../index'
 
 //==============================================================================
 //==============================================================================
@@ -82,9 +82,10 @@ export class CellDLModel {
     #diagramMetadata: Record<string, NamedNode>
     #diagramProperties: StringProperties = {}
 
+    #annotations: Map<string, AnnotationValue> = new Map()
     #objects: Map<string, CellDLObject> = new Map()
 
-    constructor(celldlData: string, _annotation: Annotation|undefined, celldlViewer: CellDLViewer) {
+    constructor(celldlData: string, annotations: Annotations, celldlViewer: CellDLViewer) {
         this.#diagramMetadata = DIAGRAM_METADATA()
         this.#celldlViewer = celldlViewer
         this.#documentNode = $rdf.namedNode(VIEWER_DIAGRAM_URI)
@@ -92,6 +93,12 @@ export class CellDLModel {
         if (celldlData !== '') {
             this.#loadSvgDiagram(celldlData)
             this.#loadMetadata()
+            for (const objectId of this.#objects.keys()) {
+                if (objectId in annotations) {
+                    // @ts-expect-error: objectId is in annotations
+                    this.#annotations.set(objectId, annotations[objectId])
+                }
+            }
         }
     }
 

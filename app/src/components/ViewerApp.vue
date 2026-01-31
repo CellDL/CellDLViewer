@@ -10,7 +10,7 @@
                 )
                 div.flex-grow.text-center.font-bold {{ windowTitle }}
             CellDLViewer.grow(
-                :annotation="annotation"
+                :annotations="annotations"
                 :celldlData="celldlData"
                 :theme="theme"
                 @error="onError"
@@ -37,7 +37,7 @@ import AboutDialog from './AboutDialog.vue'
 
 import CellDLViewer from '../../../index'
 
-import type { Annotation, Theme } from '../../../index'
+import type { Annotations, Theme } from '../../../index'
 
 import * as vueCommon from '@viewer/common/vueCommon'
 
@@ -88,7 +88,7 @@ if (props.theme !== undefined) {
 //==============================================================================
 //==============================================================================
 
-const annotation = vue.ref<Annotation>({})
+const annotations = vue.ref<Annotations>({})
 
 const celldlData = vue.ref<string>('')
 

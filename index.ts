@@ -29,10 +29,11 @@ export type Theme = 'light' | 'dark' | 'system';
 export { CellDLViewer }
 export default CellDLViewer
 
-export type Annotation = Record<string, string|number|boolean|object>
+export type AnnotationValue = string|number|boolean|object
+export type Annotations = Record<string, AnnotationValue>
 
 export interface CellDLViewerProps {
-    annotation?: Annotation
+    annotations?: Annotations
     celldlData: string
     theme?: Theme
 }

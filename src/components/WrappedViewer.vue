@@ -1,6 +1,6 @@
 <template lang="pug">
     CellDLViewer.grow(
-        :annotation="annotation"
+        :annotations="annotations"
         :celldlData="celldlData"
         :theme="theme"
         @error="onError"
