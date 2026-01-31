@@ -20,6 +20,7 @@
             CellDLViewer.grow(
                 :annotation="annotation"
                 :celldlData="celldlData"
+                :theme="theme"
                 @error="onError"
             )
             AboutDialog(
@@ -61,14 +62,14 @@ import AboutDialog from './AboutDialog.vue'
 
 import CellDLViewer from '../../../index'
 
-import type { Annotation } from '../../../index'
+import type { Annotation, Theme } from '../../../index'
 
 import * as vueCommon from '@viewer/common/vueCommon'
 
 //==============================================================================
 
 const props = defineProps<{
-    theme?: string
+    theme?: Theme
 }>()
 
 //==============================================================================
