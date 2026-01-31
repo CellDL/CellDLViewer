@@ -3,6 +3,7 @@
         :annotation="annotation"
         :celldlData="celldlData"
         :theme="theme"
+        @error="onError"
     )
 </template>
 
@@ -23,4 +24,12 @@ const CellDLViewer = vue.defineAsyncComponent(async () => {
     globalThis.oxigraph = oxigraph
     return import('./CellDLViewer.vue')
 })
+
+const emit = defineEmits<{
+    'error': [msg: string]
+}>()
+
+function onError(msg: string) {
+    emit('error', msg)
+}
 </script>
