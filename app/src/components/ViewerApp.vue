@@ -1,12 +1,5 @@
 <template lang="pug">
     BlockUI.overflow-hidden
-        BackgroundComponent(
-            v-show="loadingMessage !== ''"
-        )
-        BlockingMessageComponent(
-            :message="loadingMessage"
-            v-show="loadingMessage !== ''"
-        )
         .h-dvh.flex.flex-col
             .flex
                 MainMenu(
@@ -16,7 +9,6 @@
                     @close-file="onCloseFile"
                 )
                 div.flex-grow.text-center.font-bold {{ windowTitle }}
-            ConfirmDialog
             CellDLViewer.grow(
                 :annotation="annotation"
                 :celldlData="celldlData"
@@ -27,27 +19,10 @@
                 v-model:visible="aboutVisible"
                 @close="aboutVisible = false"
             )
-            Dialog.issues(
-                v-model:visible="issuesVisible"
-            )
-                template(#header)
-                    .flex.w-full
-                        p.text-2xl.font-bold Issues generating CellML:
-                        .grow
-                        Button(
-                            icon="pi pi-copy"
-                            title="Copy to clipboard"
-                            @click="copyIssuesToClipboard"
-                        )
-                div
-                    p.mb-1(
-                        v-for="issue in issues"
-                    ) {{ issue }}
 </template>
 
 <script setup lang="ts">
 import * as vue from 'vue'
-import * as vueusecore from '@vueuse/core'
 
 import 'primeicons/primeicons.css'
 
@@ -113,14 +88,12 @@ if (props.theme !== undefined) {
 //==============================================================================
 //==============================================================================
 
-//==============================================================================
 const annotation = vue.ref<Annotation>({})
 
-const windowTitle = vue.ref<string>('New file')
 const celldlData = vue.ref<string>('')
 
+const windowTitle = vue.ref<string>('')
 
-//==============================================================================
 let currentFileHandle: FileSystemFileHandle|undefined
 const haveFile = vue.ref<boolean>(false)
 
