@@ -99,7 +99,7 @@ vue.watch(
             await celldlModel.viewModel()
         } else {
             try {
-                celldlModel = new CellDLModel(celldlViewer, props.celldlData, props.annotations || {})
+                celldlModel = new CellDLModel(celldlViewer, props.celldlData, props.annotations, props.options)
                 await celldlModel.viewModel()
             } catch(err) {
                 emit('error', `Invalid CellDL file... (${err})`)

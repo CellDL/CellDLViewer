@@ -34,10 +34,14 @@ export type Annotation = Record<string, AnnotationValue>
 
 export type Annotations = Record<string, Annotation>
 
+export type ModelViewerOptions = {
+    tooltip?: string
+}
 
 export interface CellDLViewerProps {
     annotations?: Annotations
     celldlData: string
+    options?: ModelViewerOptions
     theme?: Theme
 }
 

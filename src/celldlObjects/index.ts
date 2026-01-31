@@ -50,6 +50,7 @@ export class CellDLObject {
     #celldlSvgElement: CellDLSVGElement|undefined
     #celldlType: NamedNode
 
+    #tooltip: string|undefined
 
     constructor(
         public readonly uri: NamedNode,
@@ -133,6 +134,13 @@ export class CellDLObject {
 
     get svgElement() {
         return this.#celldlSvgElement?.svgElement || null
+    }
+
+    get tooltip(): string|undefined {
+        return this.#tooltip
+    }
+    set tooltip(tooltip: string) {
+        this.#tooltip = tooltip
     }
 
     activate(active = true) {

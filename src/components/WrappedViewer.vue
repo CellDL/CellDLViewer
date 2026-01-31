@@ -2,6 +2,7 @@
     CellDLViewer.grow(
         :annotations="annotations"
         :celldlData="celldlData"
+        :options="options"
         :theme="theme"
         @error="onError"
         @event="onEvent"

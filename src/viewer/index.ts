@@ -204,7 +204,7 @@ export class CellDLViewer {
         }
     }
 
-    showTooltip(msg: string, style: string = '') {
+    #showTooltip(msg: string, style: string = '') {
         if (msg === '') {
             this.#hideTooltip()
         } else if (this.#tooltip) {
@@ -238,6 +238,9 @@ export class CellDLViewer {
         if (activeObject && this.#activeObject !== activeObject) {
             this.#activateObject(activeObject, true)
             this.#activeObject = activeObject
+            if (activeObject.tooltip) {
+                this.#showTooltip(activeObject.tooltip, 'info')
+            }
             this.#emitModelEvent('active', activeObject)
         }
     }
