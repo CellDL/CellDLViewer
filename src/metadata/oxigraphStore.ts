@@ -154,10 +154,7 @@ export class RdfStore extends BaseStore {
         o: ObjectType | null = null,
         g: NamedNode | null = null
     ): boolean {
-        const m = this.#rdfStore.match(s, p, o, g || globalThis.oxigraph.defaultGraph())
-console.log(s, p, o, m)
-        return m.length > 0
-//        return this.#rdfStore.match(s, p, o, g || globalThis.oxigraph.defaultGraph()).length > 0
+        return this.#rdfStore.match(s, p, o, g || globalThis.oxigraph.defaultGraph()).length > 0
     }
 
     load(baseIri: string|null=null, rdf: string, contentType: ContentType=TurtleContentType, graph: NamedNode|null=null) {
