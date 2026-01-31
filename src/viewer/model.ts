@@ -29,7 +29,6 @@ import {
     CellDLUnconnectedPort
 } from '@viewer/celldlObjects'
 
-import type { PointLike } from '@viewer/common/points'
 import type { Constructor, StringProperties } from '@viewer/common/types'
 
 import { lengthToPixels } from '@viewer/geometry/units'
@@ -44,7 +43,7 @@ import {
     RDF
 } from '@viewer/metadata'
 
-import { type CellDLViewer, notifyChanges } from '.'
+import type { CellDLViewer } from '.'
 
 import type { Annotations, AnnotationValue } from '../../index'
 
@@ -119,24 +118,6 @@ export class CellDLModel {
         }
     }
 
-    get metadata(): StringProperties {
-        return Object.keys(this.#diagramProperties)
-            .filter((key) => key in this.#diagramMetadata)
-            .reduce((obj: Record<string, any>, key: string) => {
-                obj[key] = this.#diagramProperties[key]
-                return obj
-            }, {})
-    }
-    set metadata(data: StringProperties) {
-        Object.keys(data)
-            .filter((key) => key in this.#diagramMetadata)
-            .forEach((key) => {
-                // @ts-expect-error: `key` is a valid key for `data`
-                this.#diagramProperties[key] = data[key]
-            })
-        notifyChanges()
-    }
-
     get rdfStore() {
         return this.#kb
     }
@@ -147,18 +128,6 @@ export class CellDLModel {
 
     get uri(): string {
         return this.#documentNode.value
-    }
-
-    domToSvgCoords(domCoords: PointLike): DOMPoint {
-        // Transform from screen coordinates to SVG coordinates
-        const dom_to_svg_transform: DOMMatrix | undefined = this.#svgDiagram?.getScreenCTM()?.inverse()
-        return DOMPoint.fromPoint(domCoords).matrixTransform(dom_to_svg_transform)
-    }
-
-    svgToDomCoords(svgCoords: PointLike): DOMPoint {
-        // Transform from SVG coordinates to screen coordinates
-        const svg_to_dom_transform: DOMMatrix | undefined = this.#svgDiagram?.getScreenCTM() as DOMMatrix
-        return DOMPoint.fromPoint(svgCoords).matrixTransform(svg_to_dom_transform)
     }
 
     makeUri(id: string): NamedNode {
