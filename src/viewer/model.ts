@@ -188,7 +188,7 @@ export class CellDLModel {
     }
 
     #loadMetadata() {
-        const metadataElement = this.#svgDiagram!.getElementById(CELLDL_METADATA_ID) as SVGMetadataElement
+        const metadataElement = this.#svgDiagram?.getElementById(CELLDL_METADATA_ID) as SVGMetadataElement
         if (
             metadataElement &&
             (!('contentType' in metadataElement.dataset) || metadataElement.dataset.contentType === $rdf.TurtleContentType)
@@ -209,7 +209,7 @@ export class CellDLModel {
     }
 
     #setObjectSvgElement(celldlObject: CellDLObject): boolean {
-        const svgElement = <SVGGraphicsElement>this.#svgDiagram!.getElementById(celldlObject.id)
+        const svgElement = <SVGGraphicsElement>this.#svgDiagram?.getElementById(celldlObject.id)
         if (svgElement) {
             celldlObject.assignSvgElement(svgElement)
             return true
