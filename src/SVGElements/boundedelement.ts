@@ -18,115 +18,26 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { CellDLConnectedObject, CellDLObject } from '@viewer/celldlObjects/index'
-import { Point } from '@viewer/common/points'
-import { RestrictedPoint, type RestrictedValue } from '@viewer/geometry/index'
-import { Transform } from '@viewer/geometry/transforms'
+import type { CellDLObject } from '@viewer/celldlObjects'
+import { RestrictedPoint } from '@viewer/geometry'
+import { ControlRect } from '@viewer/geometry/controls'
 
-import { CellDLSVGElement } from './index'
+import { CellDLSVGElement } from '.'
 
 //==============================================================================
 
 export class BoundedElement extends CellDLSVGElement {
-    // Selected object is stroked bounding box rectangle with control points at each corner
-    // Control point move resizes (shift maintains aspect ratio if object doesn't have fixed
-    // aspect ratio property).
-    // Bounding box grab moves entire object.
-    // Rotate via double click on a control point? Cursor to change to show rotate mode; click exits rotate mode.
-    // svgElement could be a group.
-    // connector nodes on object move with the object (==> need their position wrt. bbox (centre origin, so rotate works?))
-
-    #connectedPathElements: Map<string, PathElement> = new Map()
     #controlRect: ControlRect
-    #topLeftCorner: Point
-    #transform: Transform
 
-    constructor(object: CellDLObject, svgElement: SVGGraphicsElement, gridAligned: boolean=false, align: boolean=false) {
+    constructor(object: CellDLObject, svgElement: SVGGraphicsElement) {
         super(object, svgElement)
         // local transform on the element
-        this.#transform = Transform.fromString(getComputedStyle(svgElement).transform)
         this.#controlRect = new ControlRect(
             RestrictedPoint.fromPoint(this.topLeft),
             RestrictedPoint.fromPoint(this.topLeft.add(this.size)),
             this.centroidOffset
         )
         this.setCentroid(this.#controlRect.centroid.point)
-        this.#topLeftCorner = this.#controlRect.topLeftPoint
-        this.#controlRect.gridAligned = gridAligned
-        if (gridAligned && align) {
-            const gridAlignedCentroid = editGuides.gridAlign(this.centroid, { fullSnap: true })
-            this.#reposition(gridAlignedCentroid)
-        }
-    }
-
-    limitDirection(direction: string, minimum: number | RestrictedValue, maximum: number | RestrictedValue) {
-        if (direction === 'H') {
-            this.#controlRect.centroid.xValue.narrowRange(minimum, maximum)
-        } else if (direction === 'V') {
-            this.#controlRect.centroid.yValue.narrowRange(minimum, maximum)
-        }
-    }
-
-    unlimitDirection() {
-        this.#controlRect.centroid.xValue.reassignMinimum(-Infinity)
-        this.#controlRect.centroid.xValue.reassignMaximum(Infinity)
-        this.#controlRect.centroid.yValue.reassignMinimum(-Infinity)
-        this.#controlRect.centroid.yValue.reassignMaximum(Infinity)
-    }
-
-    redraw() {
-        const newTopLeft = this.#controlRect.topLeftPoint
-        const translation = Transform.Translate(
-            newTopLeft.x - this.#topLeftCorner.x,
-            newTopLeft.y - this.#topLeftCorner.y
-        )
-        let transform: Transform
-        if (this.globalTransform) {
-            const globalInverse = this.globalTransform.inverse()
-            const globalTransform = this.updateGlobalTransform(translation)
-            if (globalTransform) {
-                transform = globalTransform.leftMultiply(globalInverse).leftMultiply(this.#transform)
-            } else {
-                transform = globalInverse.leftMultiply(this.#transform)
-            }
-        } else {
-            this.updateGlobalTransform(translation)
-            transform = translation.leftMultiply(this.#transform)
-        }
-        if (transform.isIdentity) {
-            this.svgElement.removeAttribute('transform')
-        } else {
-            this.svgElement.setAttribute('transform', transform.toString())
-        }
-        super.redraw()
-    }
-
-    #reposition(centroid: Point) {
-        this.setCentroid(centroid)
-        this.#controlRect.reposition(centroid)
-        if (this.#controlRect.dirty) {
-            this.redraw()
-        }
-    }
-
-    async updateSvgElement(svg: string) {
-        const savedCorners = this.corners.map((point) => Point.fromPoint(point))
-        await super.updateSvgElement(svg)
-        this.#controlRect.setCentroidOffset(this.centroidOffset)
-        this.#controlRect.setCornerPositions(
-            RestrictedPoint.fromPoint(this.topLeft),
-            RestrictedPoint.fromPoint(this.topLeft.add(this.size))
-        )
-        const cornerDeltas = this.corners.map((corner, index) => corner.subtract(savedCorners[index]!))
-        if (this.celldlObject.isConnectable) {
-            // Reset any restrictions for `componentBoundingBoxResisized()`
-            this.unlimitDirection()
-            // Adjust boundary intersections of paths connected to the component
-            for (const path of this.#connectedPathElements.values()) {
-                path.componentBoundingBoxResisized(this, cornerDeltas as [Point, Point])
-            }
-            ;(<CellDLConnectedObject>this.celldlObject).connections.forEach((c) => c.redraw())
-        }
     }
 }
 

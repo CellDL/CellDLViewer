@@ -18,11 +18,10 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { PointLike } from '@viewer/common/points'
 import type { PropertiesType } from '@viewer/common/types'
 import { CELLDL, type NamedNode } from '@viewer/metadata'
+import type { CellDLSVGElement } from '@viewer/SVGElements'
 import { BoundedElement } from '@viewer/SVGElements/boundedelement'
-import type { CellDLSVGElement } from '@viewer/SVGElements/index'
 import type { CellDLModel } from '@viewer/viewer/model'
 
 //==============================================================================
@@ -155,25 +154,8 @@ export class CellDLObject {
         this.#celldlSvgElement?.activate(active)
     }
 
-    containsPoint(point: PointLike): boolean {
-        return this.#celldlSvgElement?.containsPoint(point) || false
-    }
-
-    initialiseMove(svgElement: SVGGraphicsElement) {
-        this.#moveable = this.#celldlSvgElement?.isMoveable(svgElement) || false
-        if (this.#moveable) {
-            svgElement.style.setProperty('cursor', 'move')
-        }
-    }
-
     highlight(highlight = true) {
         this.#celldlSvgElement?.highlight(highlight)
-    }
-
-    redraw() {
-        if (this.#celldlSvgElement) {
-            this.#celldlSvgElement.redraw()
-        }
     }
 
     select(selected = true) {
@@ -184,15 +166,15 @@ export class CellDLObject {
         this.#name = name
     }
 
-    assignSvgElement(_svgElement: SVGGraphicsElement, _align: boolean) {
+    assignSvgElement(_svgElement: SVGGraphicsElement) {
     }
 }
 
 //==============================================================================
 
 export class CellDLMoveableObject extends CellDLObject {
-    assignSvgElement(svgElement: SVGGraphicsElement, align: boolean) {
-        new BoundedElement(this, svgElement, this.isAlignable, align)
+    assignSvgElement(svgElement: SVGGraphicsElement) {
+        new BoundedElement(this, svgElement)
     }
 }
 
@@ -232,10 +214,6 @@ export class CellDLConduit extends CellDLComponent {
 export class CellDLCompartment extends CellDLConnectedObject {
     static readonly celldlClassName = CELLDL_CLASS.Compartment
     static celldlType = 'Compartment'
-
-    get isAlignable() {
-        return false
-    }
 }
 
 //==============================================================================
@@ -243,10 +221,6 @@ export class CellDLCompartment extends CellDLConnectedObject {
 export class CellDLConnection extends CellDLObject {
     static readonly celldlClassName = CELLDL_CLASS.Connection
     static celldlType = 'Connection'
-
-    get isAlignable() {
-        return false
-    }
 }
 
 //==============================================================================
@@ -259,10 +233,6 @@ export class CellDLInterface extends CellDLConnectedObject {
 
     toString(): string {
         return `${super.toString()}  External: ${this.#externalConnections.map((c) => c.id).join(', ')}`
-    }
-
-    get isAlignable() {
-        return false
     }
 }
 

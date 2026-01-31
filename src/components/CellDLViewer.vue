@@ -2,10 +2,6 @@
     .flex.flex-col.h-full
         main.viewer-pane.relative.flex.grow
             div#svg-content(ref="svgContent")
-                <!-- context-menu(id="context-menu")  -->
-        footer.status-bar
-            span#status-msg
-            span#status-pos
 </template>
 
 <script setup lang="ts">
@@ -23,17 +19,11 @@ import '@viewer/assets/style.css'
 
 import * as vueCommon from '@viewer/common/vueCommon'
 import { CellDLModel } from '@viewer/viewer/model'
-import { CellDLViewer } from '@viewer/viewer/index'
+import { CellDLViewer } from '@viewer/viewer'
 
 //==============================================================================
 
-import type {
-    CellDLViewerProps,
-    ViewerData,
-    EditorEditCommand,
-    EditorFileCommand,
-    EditorViewCommand
-} from '../../index'
+import type { CellDLViewerProps } from '../../index'
 
 const props = defineProps<CellDLViewerProps>()
 
@@ -89,34 +79,28 @@ const svgContent = vue.ref(null)
 
 let celldlModel: CellDLModel|undefined
 
-let celldlViewer: CellDLViewer = new CellDLViewer()
+const celldlViewer: CellDLViewer = new CellDLViewer()
 
-//==============================================================================
 //==============================================================================
 
 const emit = defineEmits<{
-    'viewer-data': [data: EditorData],
     'error': [msg: string]
 }>()
 
+//==============================================================================
+
 vue.watch(
-    () => props.editorCommand,
+    () => props.celldlData,
     async () => {
-        if (props.editorCommand.command === 'file') {
-            const command = props.editorCommand as EditorFileCommand
-            const options = command.options
-            if  (options.action === 'close') {
-                celldlModel = new CellDLModel('', '', celldlViewer)
-                await celldlViewer.viewModel(celldlModel)
-            } else if (options.action === 'open') {
-                if (options.data !== undefined) {
-                    try {
-                        celldlModel = new CellDLModel(options?.name || '', options.data, celldlViewer)
-                        await celldlViewer.viewModel(CellDLModel)
-                    } catch(err) {
-                        emit('error', `Cannot open ${options?.name} -- invalid CellDL file?`)
-                    }
-                }
+        if (props.celldlData === '') {
+            celldlModel = new CellDLModel('', {}, celldlViewer)
+            await celldlModel.viewModel()
+        } else {
+            try {
+                celldlModel = new CellDLModel(props.celldlData, props.annotation, celldlViewer)
+                await celldlModel.viewModel()
+            } catch(err) {
+                emit('error', `Invalid CellDL file... (${err})`)
             }
         }
     }
@@ -130,9 +114,9 @@ vue.onMounted(async () => {
         celldlViewer.mount(svgContent.value)
 
         // Create a new model in the viewer's window
-        celldlModel = new CellDLModel('', '', celldlViewer)
+        celldlModel = new CellDLModel('', {}, celldlViewer)
 
-        await celldlModel.view()
+        await celldlModel.viewModel()
     }
 })
 
@@ -142,28 +126,12 @@ vue.onMounted(async () => {
 
 <style scoped>
 .viewer-pane {
-    min-height: calc(100% - 1.6em);
+    min-height: 100%;
 }
 #svg-content {
     margin:  0;
     border: 2px solid grey;
     flex: 1;
     overflow: hidden;
-}
-.status-bar {
-    min-height: 1.6em;
-    border-top: 1px solid gray;
-    padding-left: 16px;
-    padding-right: 16px;
-    background-color: #ECECEC;
-}
-#status-msg.error {
-    color: red;
-}
-#status-msg.warn {
-   color: blue;
-}
-#status-pos {
-    float: right;
 }
 </style>

@@ -18,10 +18,9 @@ limitations under the License.
 
 ******************************************************************************/
 
-
 import type { PointLike } from '@viewer/common/points'
 import type { StringProperties } from '@viewer/common/types'
-import type { Extent } from '@viewer/geometry/index'
+import type { Extent } from '@viewer/geometry'
 import { lengthToPixels } from '@viewer/geometry/units'
 
 //==============================================================================

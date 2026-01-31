@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-import { Point, type PointLike, PointMath } from '@viewer/common/points'
+import { Point, type PointLike } from '@viewer/common/points'
 import type { Transform } from '@viewer/geometry/transforms'
 import { round } from '@viewer/utils'
 
@@ -383,11 +383,6 @@ export class RestrictedPoint {
     reassignValue(point: PointLike) {
         this.xValue.reassignValue(point.x)
         this.yValue.reassignValue(point.y)
-    }
-
-    startMove(point: PointLike) {
-        // we need to know offset of pointer from centre (or topleft) of object
-        this.#moveOffset = Point.fromPoint(PointMath.subtract(this.point, point))
     }
 
     toString(): string {

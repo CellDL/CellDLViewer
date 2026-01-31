@@ -18,7 +18,6 @@ limitations under the License.
 
 ******************************************************************************/
 
-import { CELLDL_CLASS, type CellDLObject } from '@viewer/celldlObjects/index'
 import {
     CellDLAnnotation,
     CellDLComponent,
@@ -26,35 +25,30 @@ import {
     type CellDLConnectedObject,
     CellDLConnection,
     CellDLInterface,
+    type CellDLObject,
     CellDLUnconnectedPort
-} from '@viewer/celldlObjects/index.ts'
+} from '@viewer/celldlObjects'
 
 import type { PointLike } from '@viewer/common/points'
-import { CELLDL_BACKGROUND_CLASS, CellDLStylesheet } from '@viewer/common/styling'
 import type { Constructor, StringProperties } from '@viewer/common/types'
 
-import type { Bounds, Extent } from '@viewer/geometry/index'
 import { lengthToPixels } from '@viewer/geometry/units'
 
-import * as $rdf from '@viewer/metadata/index'
+import * as $rdf from '@viewer/metadata'
 import {
     CELLDL,
-    CELLDL_DECLARATIONS,
     DCT,
     type NamedNode,
-    MetadataPropertiesMap,
     type MetadataPropertyValue,
     OWL,
     RDF
-} from '@viewer/metadata/index'
+} from '@viewer/metadata'
 
 import { type CellDLViewer, notifyChanges } from '.'
 
-//==============================================================================
-
-export const CELLDL_VERSION = '1.0'
 import type { Annotation } from '../../index'
 
+//==============================================================================
 //==============================================================================
 
 function DIAGRAM_METADATA() {
@@ -70,31 +64,20 @@ function DIAGRAM_METADATA() {
 
 //==============================================================================
 
-//==============================================================================
+const CELLDL_METADATA_ID = 'celldl-rdf-metadata'
 
-const CELLDL_DEFINITIONS_ID = 'celldl-svg-definitions'
-export const CELLDL_METADATA_ID = 'celldl-rdf-metadata'
-const CELLDL_STYLESHEET_ID = 'celldl-svg-stylesheet'
-
-const DIAGRAM_MARGIN = 20
-
-//==============================================================================
-
-const CELLDL_DIAGRAM_ID = 'celldl-diagram-layer'
-
-const ID_PREFIX = 'ID-'
+const VIEWER_DIAGRAM_URI = 'file://tmp/viewing.celldl'
 
 //==============================================================================
 
 export class CellDLModel {
-    #svgDiagram!: SVGSVGElement
+    #svgDiagram: SVGSVGElement|null = null
 
     #kb = new $rdf.RdfStore()
     #celldlViewer: CellDLViewer
 
     #documentNode: NamedNode
     #documentNS: $rdf.Namespace
-    #filePath: string
 
     #diagramMetadata: Record<string, NamedNode>
     #diagramProperties: StringProperties = {}
@@ -104,18 +87,11 @@ export class CellDLModel {
     constructor(celldlData: string, _annotation: Annotation|undefined, celldlViewer: CellDLViewer) {
         this.#diagramMetadata = DIAGRAM_METADATA()
         this.#celldlViewer = celldlViewer
-        if (this.#filePath !== '') {
-            let documentUri = encodeURI(this.#filePath)
-            if (
-                !documentUri.startsWith('file:') &&
-                !documentUri.startsWith('http:') &&
-                !documentUri.startsWith('https:')
-            ) {
-                documentUri = `file://${documentUri}`
-            }
-            this.#documentNode = $rdf.namedNode(documentUri)
-            this.#documentNS = new $rdf.Namespace(`${documentUri}#`)
-            this.#loadCellDL(celldlData)
+        this.#documentNode = $rdf.namedNode(VIEWER_DIAGRAM_URI)
+        this.#documentNS = new $rdf.Namespace(`${VIEWER_DIAGRAM_URI}#`)
+        if (celldlData !== '') {
+            this.#loadSvgDiagram(celldlData)
+            this.#loadMetadata()
         }
     }
 
@@ -129,7 +105,11 @@ export class CellDLModel {
     }
 
     async viewModel() {
-        await this.#celldlViewer.viewModel(this)
+        if (this.#svgDiagram) {
+            await this.#celldlViewer.viewDiagram(this)
+        } else {
+            this.#celldlViewer.closeDiagram()
+        }
     }
 
     get metadata(): StringProperties {
@@ -178,21 +158,8 @@ export class CellDLModel {
         return this.#documentNS.uri(id)
     }
 
-    #loadDiagramProperties() {
-        for (const [key, property] of Object.entries(this.#diagramMetadata)) {
-            for (const stmt of this.#kb.statementsMatching(this.#documentNode, property, null)) {
-                this.#diagramProperties[key] = stmt.object.value
-                break
-            }
-        }
-    }
-
     objectById(id: string): CellDLObject | null {
         return this.#objects.get(id) || null
-    }
-
-    #loadCellDL(celldlData: string) {
-        this.#loadSvgDiagram(celldlData)
     }
 
     #loadSvgDiagram(svgData: string) {
@@ -235,20 +202,27 @@ export class CellDLModel {
     }
 
     #setObjectSvgElement(celldlObject: CellDLObject): boolean {
-        const svgElement = <SVGGraphicsElement>this.#svgDiagram.getElementById(celldlObject.id)
+        const svgElement = <SVGGraphicsElement>this.#svgDiagram!.getElementById(celldlObject.id)
         if (svgElement) {
-            celldlObject.assignSvgElement(svgElement, false)
-            if (celldlObject.hasEditGuides) {
-                editGuides.addGuide(<CellDLComponent>celldlObject)
-            }
+            celldlObject.assignSvgElement(svgElement)
             return true
         }
         console.error(`Missing SVG element for ${celldlObject.id}`)
         return false
     }
 
+    #celldlObjectFromRdf<T extends CellDLObject>(CellDLClass: Constructor<T>, subject: $rdf.SubjectType): T {
+        const metadata = this.#kb.metadataPropertiesForSubject(subject)
+        const celldlObject = new CellDLClass(subject, metadata, this)
+        return celldlObject
+    }
+
     #subjectsOfType(parentType: NamedNode): [$rdf.SubjectType, NamedNode][] {
         return this.#kb.subjectsOfType(parentType).filter((st) => st[0].value.startsWith(this.#documentNode.value))
+    }
+
+    #addMoveableObject(object: CellDLObject) {
+        this.#objects.set(object.id, object)
     }
 
     #loadObject<T extends CellDLObject>(type: NamedNode, CellDLClass: Constructor<T>) {

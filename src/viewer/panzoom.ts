@@ -66,7 +66,6 @@ export default class PanZoom {
     }
 
     #setViewbox(viewbox: Extent) {
-        editGuides.viewboxUpdated(viewbox)
         this.#svgDiagram!.setAttribute('viewBox', viewbox.map((n) => String(n)).join(' '))
     }
 

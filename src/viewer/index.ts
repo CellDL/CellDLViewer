@@ -25,9 +25,8 @@ import { useTippy } from "vue-tippy"
 
 import '@viewer/assets/svgContent.css'
 
-import type { CellDLObject } from '@viewer/celldlObjects/index'
+import type { CellDLObject } from '@viewer/celldlObjects'
 import type { PointLike } from '@viewer/common/points'
-import { round } from '@viewer/utils'
 
 import type { CellDLModel } from './model'
 
@@ -63,22 +62,14 @@ export class CellDLViewer {
     static instance: CellDLViewer | null = null
 
     #container: HTMLElement | null = null
-    #statusMsg: HTMLElement | null = null
-    #statusPos: HTMLElement | null = null
-    #statusStyle: string = ''
-
     #celldlModel: CellDLModel | null = null
     #svgDiagram: SVGSVGElement | null = null
 
     #panning: boolean = false
     #panzoom: PanZoom | null = null
     #pointerMoved: boolean = false
-    #pointerPosition: DOMPoint | null = null
 
     #activeObject: CellDLObject | null = null
-
-    #dragging: boolean = false
-
     #selectedObject: CellDLObject | null = null
 
     #pointerDownTime: number = 0
@@ -93,21 +84,9 @@ export class CellDLViewer {
 
     mount(svgContainer: HTMLElement) {
         this.#container = svgContainer
-        this.#statusMsg = document.getElementById('status-msg')
-        this.#statusPos = document.getElementById('status-pos')
 
         // Create a panzoom handler
         this.#panzoom = new PanZoom(this.#container)
-
-        // Set up event handlers
-        this.#container.addEventListener('click', this.#pointerClickEvent.bind(this))
-
-        this.#container.addEventListener('pointerover', this.#pointerOverEvent.bind(this))
-        this.#container.addEventListener('pointerout', this.#pointerOutEvent.bind(this))
-
-        this.#container.addEventListener('pointerdown', this.#pointerDownEvent.bind(this))
-        this.#container.addEventListener('pointermove', this.#pointerMoveEvent.bind(this))
-        this.#container.addEventListener('pointerup', this.#pointerUpEvent.bind(this))
 
         // Create a tooltip
 
@@ -127,15 +106,34 @@ export class CellDLViewer {
         }
     }
 
-    get celldlModel() {
-        return this.#celldlModel
+    #addPointerEventHandlers() {
+        if (this.#container) {
+            this.#container.addEventListener('click', this.#pointerClickEvent.bind(this))
+
+            this.#container.addEventListener('pointerover', this.#pointerOverEvent.bind(this))
+            this.#container.addEventListener('pointerout', this.#pointerOutEvent.bind(this))
+
+            this.#container.addEventListener('pointerdown', this.#pointerDownEvent.bind(this))
+            this.#container.addEventListener('pointermove', this.#pointerMoveEvent.bind(this))
+            this.#container.addEventListener('pointerup', this.#pointerUpEvent.bind(this))
+        }
     }
 
-    get status(): string {
-        return this.#statusMsg ? this.#statusMsg.innerText : ''
+    #removePointerEventHandlers() {
+        if (this.#container) {
+            this.#container.removeEventListener('click', this.#pointerClickEvent.bind(this))
+
+            this.#container.removeEventListener('pointerover', this.#pointerOverEvent.bind(this))
+            this.#container.removeEventListener('pointerout', this.#pointerOutEvent.bind(this))
+
+            this.#container.removeEventListener('pointerdown', this.#pointerDownEvent.bind(this))
+            this.#container.removeEventListener('pointermove', this.#pointerMoveEvent.bind(this))
+            this.#container.removeEventListener('pointerup', this.#pointerUpEvent.bind(this))
+        }
     }
-    set status(text: string) {
-        this.showMessage(text)
+
+    get celldlModel() {
+        return this.#celldlModel
     }
 
     get windowSize(): [number, number] {
@@ -145,12 +143,14 @@ export class CellDLViewer {
         return [0, 0]
     }
 
-    async editDiagram(celldlModel: CellDLModel) {
+    async viewDiagram(celldlModel: CellDLModel) {
         if (this.#celldlModel !== null) {
-            this.closeDiagram()
+            this.closeDiagram(true)
+        } else {
+            this.#addPointerEventHandlers()
         }
         this.#celldlModel = celldlModel
-        this.#svgDiagram = celldlModel.svgDiagram
+        this.#svgDiagram = celldlModel.svgDiagram!
 
         // Show the model's diagram in the viewer's window
         if (this.#container) {
@@ -164,7 +164,7 @@ export class CellDLViewer {
         celldlModel.finishSetup()
 
         // Enable pan/zoom and toolBars
-        this.#panzoom!.enable(this.#svgDiagram!)
+        this.#panzoom?.enable(this.#svgDiagram)
 
         // Set initial state
         this.#activeObject = null
@@ -172,9 +172,12 @@ export class CellDLViewer {
         this.#selectedObject = null
     }
 
-    closeDiagram() {
+    closeDiagram(newDiagram: boolean=false) {
         if (this.#celldlModel !== null) {
-            this.#panzoom!.disable()
+            if (!newDiagram) {
+                this.#removePointerEventHandlers()
+            }
+            this.#panzoom?.disable()
             if (this.#container) {
                 this.#container.removeChild(this.#svgDiagram as Node)
             }
@@ -192,52 +195,6 @@ export class CellDLViewer {
         this.#svgDiagram?.style.removeProperty('cursor')
         if (this.#container) {
             this.#container.style.setProperty('cursor', 'default')
-        }
-    }
-
-    showMessage(msg: string, style: string = '') {
-        if (this.#statusMsg) {
-            this.#statusMsg.innerText = msg
-            if (this.#statusStyle !== '') {
-                this.#statusMsg.classList.remove(this.#statusStyle)
-            }
-            if (style !== '') {
-                this.#statusMsg.classList.add(style)
-                this.#statusStyle = style
-            }
-        }
-    }
-
-    #showStatus(pos: PointLike|null) {
-        if (pos === null) {
-            this.status = ''
-            if (this.#statusPos) {
-                const text = this.#statusPos.innerText
-                if (!text.startsWith('(')) {
-                    if (text.includes('(')) {
-                        const parts = text.split('(')
-                        this.#statusPos.innerText = `(${parts.slice(1).join('(')}`
-                    } else {
-                        this.#statusPos.innerText = ''
-                    }
-                }
-            }
-        } else {
-            const position = `(${round(pos.x, 1)}, ${round(pos.y, 1)})`
-            if (this.#activeObject) {
-                this.status = this.#activeObject.name ?? ''
-                if (this.#statusPos) {
-                    this.#statusPos.innerText = `${this.#activeObject.id} ${position}`
-                }
-            } else {
-                // This will clear a displayed error message...
-                // Maybe have this.#statusText that will show if there is no direct
-                // `showMessage()` call -- split into `#showMessage()`?
-                this.status = ''
-                if (this.#statusPos) {
-                    this.#statusPos.innerText = position
-                }
-            }
         }
     }
 
@@ -277,7 +234,6 @@ export class CellDLViewer {
 
     #setActiveObject(activeObject: CellDLObject | null) {
         if (activeObject && this.#activeObject !== activeObject) {
-            activeObject.drawControlHandles()
             this.#activateObject(activeObject, true)
             this.#activeObject = activeObject
         }
@@ -285,7 +241,6 @@ export class CellDLViewer {
 
     #unsetActiveObject() {
         if (this.#activeObject) {
-            this.#activeObject.clearControlHandles()
             this.#activateObject(this.#activeObject, false)
             this.#activeObject = null
         }
@@ -295,7 +250,6 @@ export class CellDLViewer {
         this.#unsetSelectedObject() // This will depend upon multi-selection
         if (selectedObject !== null) {
             selectedObject.select(true)
-            selectedObject.drawControlHandles()
             this.#selectedObject = selectedObject
         }
     }
@@ -303,7 +257,6 @@ export class CellDLViewer {
     #unsetSelectedObject() {
         if (this.#selectedObject) {
             this.#selectedObject.select(false)
-            this.#selectedObject.clearControlHandles()
             this.#selectedObject = null
         }
     }
@@ -369,7 +322,6 @@ export class CellDLViewer {
         }
         if (currentObject) {
             this.#setActiveObject(currentObject)
-            currentObject.initialiseMove(element)
         }
     }
 
@@ -401,9 +353,6 @@ export class CellDLViewer {
             return
         }
         this.#pointerMoved = true
-        this.#pointerPosition = new DOMPoint(event.x, event.y)
-        const svgPoint = this.#domToSvgCoords(event)
-        this.#showStatus(svgPoint)
     }
 
     #pointerUpEvent(event: PointerEvent) {

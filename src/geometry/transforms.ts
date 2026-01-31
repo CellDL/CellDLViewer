@@ -36,44 +36,6 @@ import { Point, type PointLike } from '@viewer/common/points'
 
 //==============================================================================
 
-export class NormalTransform {
-    #inverse: Matrix
-    #matrix: Matrix
-
-    constructor(p0: PointLike, p1: PointLike) {
-        const translate: Matrix = {
-            a: 1,
-            c: 0,
-            e: -p0.x,
-            b: 0,
-            d: 1,
-            f: -p0.y
-        }
-        const delta = Point.fromPoint(p1).subtract(p0)
-        const l2 = delta.x * delta.x + delta.y * delta.y
-        const scaleRotate: Matrix = {
-            a: delta.x / l2,
-            c: delta.y / l2,
-            e: 0,
-            b: -delta.y / l2,
-            d: delta.x / l2,
-            f: 0
-        }
-        this.#matrix = compose([scaleRotate, translate])
-        this.#inverse = inverse(this.#matrix)
-    }
-
-    normalise(point: PointLike): Point {
-        return Point.fromPoint(applyToPoint(this.#matrix, point))
-    }
-
-    invert(point: PointLike): Point {
-        return Point.fromPoint(applyToPoint(this.#inverse, point))
-    }
-}
-
-//==============================================================================
-
 export class Transform {
     #matrix: Matrix
 

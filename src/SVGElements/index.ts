@@ -19,10 +19,16 @@ limitations under the License.
 ******************************************************************************/
 
 
-import { CELLDL_CLASS, type CellDLObject } from '@viewer/celldlObjects/index'
-import { Point, type PointLike, PointMath } from '@viewer/common/points'
-import { Bounds } from '@viewer/geometry/index'
+import { CELLDL_CLASS, type CellDLObject } from '@viewer/celldlObjects'
+import { Point, type PointLike } from '@viewer/common/points'
+import { CONNECTION_WIDTH, SELECTION_STROKE_WIDTH } from '@viewer/common/styling'
+import { svgCircle } from '@viewer/common/svgUtils'
+import { Bounds } from '@viewer/geometry'
+import { FixedControlRect }from '@viewer/geometry/controls'
 import { Transform } from '@viewer/geometry/transforms'
+
+
+const CONDUIT_SELECTION_RADIUS = 9
 
 //==============================================================================
 
@@ -63,6 +69,7 @@ export class CellDLSVGElement {
         celldlObject.setCelldlSvgElement(this)
         this.#svgElement = svgElement
         this.#selectionElement = svgElement
+        this.#updatedSvgElement()
     }
 
     get bounds(): Bounds {
@@ -128,18 +135,6 @@ export class CellDLSVGElement {
             : this.#bounds
     }
 
-    updateGlobalTransform(transform: Transform): Transform | null {
-        if (this.#globalTransform) {
-            this.#globalTransform = this.#globalTransform.leftMultiply(transform)
-            if (this.#globalTransform.isIdentity) {
-                this.#globalTransform = null
-            }
-        } else {
-            this.#globalTransform = transform
-        }
-        return this.#globalTransform
-    }
-
     #selectionElementMembers(): SVGGraphicsElement[] {
         const members: SVGGraphicsElement[] = []
         if (this.#selectionElement.tagName === 'g'
@@ -173,102 +168,6 @@ export class CellDLSVGElement {
         this.#setSelectionClass('active', active)
     }
 
-    /**
-     * Check if an object can be moved.
-     *
-     * Called when the pointer is over an object.
-     *
-     * @param      {SVGGraphicsElement}  _svgElement  The SVG element of the object the pointer is over
-     * @return     {boolean}             `true` if the object can be moved, after changing the pointer's
-     *                                   cursor to an appropriate form.
-     */
-    isMoveable(_svgElement: SVGGraphicsElement): boolean {
-        return false
-    }
-
-    startMove(_svgPoint: PointLike) {}
-
-    move(_svgPoint: PointLike) {}
-
-    endMove() {}
-
-    xBounds(padding: number = 0): [number, number] {
-        padding = this.xPadding(padding)
-        return [
-            this.centroid.x + this.#cornerOffsets[2].x - padding,
-            this.centroid.x + this.#cornerOffsets[0].x + padding
-        ]
-    }
-
-    xPadding(padding: number): number {
-        if (padding <= 1.0) {
-            return Math.min(padding * this.width, MAX_CONNECTION_SPLAY_PADDING)
-        }
-        return padding
-    }
-
-    yBounds(padding: number = 0): [number, number] {
-        padding = this.yPadding(padding)
-        return [
-            this.centroid.y + this.#cornerOffsets[2].y - padding,
-            this.centroid.y + this.#cornerOffsets[0].y + padding
-        ]
-    }
-
-    yPadding(padding: number): number {
-        if (padding <= 1.0) {
-            return Math.min(padding * this.height, MAX_CONNECTION_SPLAY_PADDING)
-        }
-        return padding
-    }
-
-    pointOutside(point: PointLike, padding: number = 0): boolean {
-        const xBounds = this.xBounds(padding)
-        const yBounds = this.yBounds(padding)
-        return point.x < xBounds[0] || xBounds[1] < point.x || point.y < yBounds[0] || yBounds[1] < point.y
-    }
-
-    boundaryFace(point: PointLike): string {
-        if (this.containsPoint(point)) {
-            return ''
-        }
-        const delta = PointMath.subtract(point, this.centroid)
-        if (delta.x < 0) {
-            if (delta.y < 0) {
-                return this.#cornerOffsets[2].x * delta.y < this.#cornerOffsets[2].y * delta.x ? 'L' : 'T'
-            } else {
-                return this.#cornerOffsets[3].x * delta.y < this.#cornerOffsets[3].y * delta.x ? 'B' : 'L'
-            }
-        } else {
-            if (delta.y < 0) {
-                return this.#cornerOffsets[1].x * delta.y < this.#cornerOffsets[1].y * delta.x ? 'T' : 'R'
-            } else {
-                return this.#cornerOffsets[0].x * delta.y < this.#cornerOffsets[0].y * delta.x ? 'R' : 'B'
-            }
-        }
-    }
-
-    containsPoint(point: PointLike, padding: number = 0): boolean {
-        let bounds: [Point, Point]
-        if (padding) {
-            // expand corners by padding
-            const pad = new Point(this.xPadding(padding), this.yPadding(padding))
-            bounds = [
-                this.#cornerOffsets[2].add({ x: -pad.x, y: -pad.y }), // TL
-                this.#cornerOffsets[0].add({ x: pad.x, y: pad.y }) // BR
-            ]
-        } else {
-            bounds = [this.#cornerOffsets[2], this.#cornerOffsets[0]]
-        }
-        const deltaX = point.x - this.centroid.x
-        const deltaY = point.y - this.centroid.y
-        return bounds[0].x <= deltaX && deltaX <= bounds[1].x && bounds[0].y <= deltaY && deltaY <= bounds[1].y
-    }
-
-    clearControlHandles() {}
-
-    drawControlHandles() {}
-
     highlight(highlight = true) {
         this.#setSelectionClass('highlight', highlight)
     }
@@ -277,15 +176,99 @@ export class CellDLSVGElement {
         return false
     }
 
-    redraw() {}
-
-    remove() {
-        this.svgElement.remove()
-    }
-
     select(selected = true) {
         this.#setSelectionClass('selected', selected)
         this.#selected = selected
+    }
+
+    #updateBounds() {
+        const bounds = this.svgBounds(true)
+        this.#size = new Point(bounds.right - bounds.left, bounds.bottom - bounds.top)
+        if (this.#centroid) {
+            this.#topLeft = this.#centroid.subtract(this.#size.scale(this.#centroidOffset))
+            // Get bounds in local coordinates
+            this.#bounds = new Bounds(
+                this.#topLeft.x,
+                this.#topLeft.y,
+                this.#topLeft.x + this.#size.x,
+                this.#topLeft.y + this.#size.y
+            )
+        } else {
+            this.#topLeft = new Point(bounds.left, bounds.top)
+            this.#bounds = bounds
+            this.#centroid = this.#size.scale(this.#centroidOffset).add(this.#topLeft)
+        }
+        const topLeftOffset = this.#size.scale(this.#centroidOffset).scalarScale(-1)
+        // Corner offsets are wrt centroid, anticlockwise from bottom right; see comment below in ``boundaryIntersections()``
+        const connectionComponentGap: number = CONNECTION_WIDTH / 2 - SELECTION_STROKE_WIDTH / 2
+        if (connectionComponentGap !== 0) {
+            this.#cornerOffsets = [
+                topLeftOffset.add(this.#size).add({ x: connectionComponentGap, y: connectionComponentGap }),
+                topLeftOffset
+                    .add({ x: this.#size.x, y: 0 })
+                    .add({ x: connectionComponentGap, y: -connectionComponentGap }),
+                topLeftOffset.add({ x: -connectionComponentGap, y: -connectionComponentGap }),
+                topLeftOffset
+                    .add({ x: 0, y: this.#size.y })
+                    .add({ x: -connectionComponentGap, y: connectionComponentGap })
+            ]
+        } else {
+            this.#cornerOffsets = [
+                topLeftOffset.add(this.#size),
+                topLeftOffset.add({ x: this.#size.x, y: 0 }),
+                topLeftOffset,
+                topLeftOffset.add({ x: 0, y: this.#size.y })
+            ]
+        }
+    }
+
+    #updatedSvgElement() {
+        // Find the relative offset to the element's centroid
+        this.#centroidOffset = new Point(0.5, 0.5)
+        if (this.#svgElement.tagName === 'g') {
+            const firstChild = this.#svgElement.children.item(0) as SVGGraphicsElement
+            if (firstChild.dataset.centreX) {
+                this.#centroidOffset = new Point(+firstChild.dataset.centreX, +firstChild.dataset.centreY!)
+            }
+        }
+        // And set the elements bounds relative to its centroid
+        this.#updateBounds()
+        // Add a dummy rectangle to a group so that it can be activated and selected
+        if (
+            this.#svgElement.tagName === 'g' &&
+            !this.#svgElement.classList.contains(CELLDL_CLASS.Connection) &&
+            this.#svgElement.firstElementChild !== null
+        ) {
+            const bounds = (
+                this.#svgElement.classList.contains(CELLDL_CLASS.Compartment)
+                    ? Bounds.fromSvg(this.#svgElement.firstChild as SVGGraphicsElement)
+                    : Bounds.fromSvg(this.#svgElement)
+            ).expand(SELECTION_STROKE_WIDTH / 2)
+            // Set height, width and offset of an <svg> child...
+            if (this.#svgElement.firstElementChild.tagName === 'svg') {
+                const svgChild = this.#svgElement.firstElementChild
+                svgChild.setAttribute('x', `${bounds.topLeft.x}px`)
+                svgChild.setAttribute('y', `${bounds.topLeft.y}px`)
+                svgChild.setAttribute('width', `${bounds.width}px`)
+                svgChild.setAttribute('height', `${bounds.height}px`)
+            }
+            const selectionRect = new FixedControlRect(bounds.asArray()) // versus control rect in RectangularObject
+            const svg = selectionRect.svg({
+                class: `selection-element parent-id editor-specific ${[...this.#selectionClasses.values()].join(' ')}`
+            })
+            this.#svgElement.insertAdjacentHTML('beforeend', svg)
+            this.#selectionElement = this.#svgElement.lastChild as SVGGraphicsElement
+            // Indicate a component is a conduit with a circular mark at its centre
+            if (this.celldlObject.isConduit) {
+                const centre = new Point(bounds.right - bounds.left, bounds.bottom - bounds.top)
+                    .scale(this.#centroidOffset)
+                    .add(new Point(bounds.left, bounds.top))
+                const svg = svgCircle(centre, CONDUIT_SELECTION_RADIUS, {
+                    class: 'selection-element parent-id editor-specific conduit'
+                })
+                this.#svgElement.insertAdjacentHTML('beforeend', svg)
+            }
+        }
     }
 }
 
