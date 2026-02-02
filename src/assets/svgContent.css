@@ -1,9 +1,20 @@
 :root {
-    --tooltip-error-background: darkred;
+    --viewer-border-color: var(--p-surface-500);;
+    --viewer-tooltip-error: darkred;
+  }
+
+:root {
+    --viewer-canvas-background: #eee;
+    --viewer-statusbar-background: #ececec;
+}
+
+.celldl-dark-mode {
+    --viewer-canvas-background: var(--p-surface-800);
+    --viewer-statusbar-background: var(--p-surface-700);
 }
 
 svg {
-    background-color: #eee;
+    background-color: var(--viewer-canvas-background);
     user-select: none;
     /* Element states while editing */
     --active: #0f8;
@@ -56,10 +67,10 @@ svg {
 .control-point.fixed {
     fill: white;
 }
-#celldl-editor-selection-frame.highlight .control-point {
+#celldl-viewer-selection-frame.highlight .control-point {
     stroke: #00f;
 }
-#celldl-editor-selection-frame.highlight .control-point.active {
+#celldl-viewer-selection-frame.highlight .control-point.active {
     fill: #88f;
     opacity: 1;
 }
@@ -80,7 +91,7 @@ svg {
 .selection-rect {
     fill: #ccc;
     fill-opacity: 0.2;
-    stroke: black;
+    stroke: var(--p-surface-0);
     stroke-width: 0.3;
     stroke-opacity: 0.4;
 }
@@ -130,8 +141,8 @@ svg {
 }
 
 .tooltip-error > .tippy-box {
-    background-color: var(--tooltip-error-background);
+    background-color: var(--viewer-tooltip-error);
 }
 .tooltip-error > .tippy-box > .tippy-arrow {
-    color: var(--tooltip-error-background);
+    color: var(--viewer-tooltip-error);
 }

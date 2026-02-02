@@ -9,6 +9,13 @@
                     @close-file="onCloseFile"
                 )
                 div.flex-grow.text-center.font-bold {{ windowTitle }}
+                ToggleButton.viewer-dark-selector(
+                    v-model="darkMode"
+                    offIcon="pi pi-sun"
+                    onIcon="pi pi-moon"
+                    size="small"
+                    @change="onDarkMode"
+                )
             CellDLViewer.grow(
                 :annotations="annotations"
                 :celldlData="celldlData"
@@ -21,6 +28,12 @@
                 @close="aboutVisible = false"
             )
 </template>
+
+<style>
+    .viewer-dark-selector .p-togglebutton-label {
+        display: none;
+    }
+</style>
 
 <script setup lang="ts">
 import * as vue from 'vue'
@@ -69,6 +82,20 @@ if (crtInstance) {
 }
 
 vueCommon.useTheme().setTheme(props.theme)
+
+//==============================================================================
+
+const editorTheme = vue.ref<Theme|undefined>(props.theme)
+
+const darkMode = vue.ref<boolean>(props.theme === 'dark')
+
+function onDarkMode() {
+    if (darkMode.value) {
+        editorTheme.value = 'dark'
+    } else {
+        editorTheme.value = 'light'
+    }
+    vueCommon.useTheme().setTheme(editorTheme.value)
 }
 
 //==============================================================================

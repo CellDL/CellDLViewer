@@ -26,7 +26,7 @@ export const CONNECTION_ARROW_SIZE = [4, 4] // [W, H] pixels
 export const CONNECTION_SPLAY_PADDING = 16 // If <= 1.0 then fraction of elements width and height else pixels
 export const MAX_CONNECTION_SPLAY_PADDING = 20 // pixels
 
-export const CONNECTION_COLOUR = '#334155'
+export const CONNECTION_COLOUR = '#456'
 export const CONNECTION_WIDTH = 2 // pixels
 export const CONNECTION_DASH = 2  // * width
 
