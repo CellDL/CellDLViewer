@@ -100,10 +100,6 @@ export class CellDLSVGElement {
         return this.celldlObject.id
     }
 
-    get moveable() {
-        return false
-    }
-
     get selected() {
         return this.#selected
     }
