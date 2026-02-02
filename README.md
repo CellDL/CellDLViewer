@@ -1,21 +1,10 @@
 # The CellDL Model Viewer
 
-There are two versions of the Viewer:
+The **CellDL Model Viewer** can be:
+1. Run as a standalone application in a Web browser (currently Chrome and Edge) to view CellDL files.
+2. Integrated into a web application as a [Vue 3](https://vuejs.org/) component.
 
-1. **The CellDL Editor:** a desktop application that can be run on [Intel](https://en.wikipedia.org/wiki/List_of_Intel_processors)-based and [ARM](https://en.wikipedia.org/wiki/ARM_architecture_family)-based [Windows](https://en.wikipedia.org/wiki/Microsoft_Windows), [Linux](https://en.wikipedia.org/wiki/Linux), and [macOS](https://en.wikipedia.org/wiki/MacOS) machines; and
-2. **The CellDL Viewers's Web app:** a [Web app](https://en.wikipedia.org/wiki/Web_application) that can be run on a Web browser.
-
-This package is a [Vue 3](https://vuejs.org/) component for the CellDL Editor, built with the [Composition API](https://vuejs.org/guide/extras/composition-api-faq).
-
-## Usage
-
-The component comes with the following props:
-
-**TODO**
-
-and emits the following actions:
-
-**TODO**
+## Usage as a Vue 3 component
 
 - **index.html:**
 
@@ -37,87 +26,55 @@ import App from './App.vue';
 createApp(App).mount('#app');
 ```
 
-The Vue component gives access to all of the CellDL Editor's features
-
 - **App.vue:**
 
 ```vue
 <template>
-  <CellDLEditor
-    :editorCommand="celldlEditorCommand"
-    @editorData="onEditorData"
-    @error="onError" />
+  <CellDLViewer
+    :annotations="annotations"
+    :celldlData="celldlData"
+    :theme="theme"
+    @error="onError"
+    @event="onEvent"
+  />
 </template>
 
 <script setup lang="ts">
-import type { CellDLEditorCommand, EditorData } from '@abi-software/celldl-editor';
-import '@abi-software/celldl-editor/style.css';
+import * as vue from 'vue';
 import * as vueusecore from '@vueuse/core';
 
-import * as vue from 'vue';
+import '@abi-software/celldl-viewer/style.css';
 
-import CellDLEditor from '@abi-software/celldl-editor'
+import CellDLViewer from '@abi-software/celldl-viewer'
+import type { Annotations, Theme, ViewerEvent } from '@abi-software/celldl-viewer'
 
-const celldlEditorCommand = vue.ref<CellDLEditorCommand>({
-  command: ''
-});
+const annotations = vue.ref<Annotations>({})
 
-vueusecore.useEventListener(document, 'file-edited', (_: Event) => {
-  // The current diagram has has been modified, so update any local state (e.g., add a modified indicator to the
-  // diagram's title).
-});
-
-async function onEditorData(data: EditorData) {
-  if (data.kind === 'export') {
-    // const uri = 'https://example.org/some_uri_to_identify_the_celldl_source_';
-    // const cellmlObject = celldl2cellml(uri, data.data);
-    // if (cellmlObject.cellml) {
-    //   // Save `cellmlObject.cellml`.
-    // } else if (cellmlObject.issues) {
-    //   window.alert(cellmlObject.issues.join('\n'));
-    // }
-  } else {
-    // Process `data.data`.
-  }
-}
+const celldlData = vue.ref<string>('')
 
 function onError(msg: string) {
   window.alert(msg);
 }
 
-/*
-The editor is initialised with a blank window.
+function onEvent(detail: ViewerEvent) {
+    console.log(detail)
+}
+</script>
+```
 
-1. To load a CellDL diagram set:
+The viewer is initialised with a blank window; to load a CellDL diagram set `celldlData.value` to valid CellDL.
 
-  celldlEditorCommand.value = {
-    command: 'file',
-    options: {
-      action: 'open',
-      data: celldlSource,
-      name: filename
-    }
-  }
+Events are generated in response to pointer events on the diagram's features; a `ViewerEvent` event has a `type` of event, the `id` of the feature, and any annotations associated with the feature that were provided to the viewer by `annotations.value`.
 
-2. To get serialised CellDL from the editing window set:
+The set of annotations for a diagram is a JSON object in the form:
 
-  celldlEditorCommand.value = {
-    command: 'file',
-    options: {
-      action: 'data',
-      kind: 'export'
-    }
-  }
+```
+{
+    "FEATURE_ID": {
+        "PROPERTY": "VALUE",
+        ...
+    },
 
-with `kind` set as appropriate. This will result in an `editorData` event, to be handled as above.
-
-3. To clear the editing window set:
-
-  celldlEditorCommand.value = {
-    command: 'file',
-    options: {
-      action: 'close'
-    }
-  }
-*/
-</script>```
+    ...
+}
+```
