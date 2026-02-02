@@ -49,40 +49,26 @@ const props = defineProps<{
 
 //==============================================================================
 
-// Setup PrimeVue's theme and confirmation service
+// Setup PrimeVue's theme
 
-const crtInstance = vue.getCurrentInstance()
+const crtInstance = vue.getCurrentInstance();
 
-if (crtInstance !== null) {
-    const app = crtInstance.appContext.app
+if (crtInstance) {
+    const app = crtInstance.appContext.app;
 
-    if (app.config.globalProperties.$primevue === undefined) {
-        let options = {}
-
-        if (props.theme === 'light') {
-            options = {
-                darkModeSelector: false
-            }
-        } else if (props.theme === 'dark') {
-            document.documentElement.classList.add('editor-dark-mode')
-            document.body.classList.add('editor-dark-mode')
-
-            options = {
-                darkModeSelector: '.editor-dark-mode'
-            }
-        }
-
+    if (!app.config.globalProperties.$primevue) {
         app.use(primeVueConfig as unknown as vue.Plugin, {
             theme: {
                 preset: primeVueAuraTheme,
-                options: options
+                options: {
+                    darkModeSelector: '.celldl-dark-mode'
+                }
             }
         })
     }
 }
 
-if (props.theme !== undefined) {
-    vueCommon.useTheme().setTheme(props.theme)
+vueCommon.useTheme().setTheme(props.theme)
 }
 
 //==============================================================================

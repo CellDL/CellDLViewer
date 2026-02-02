@@ -33,45 +33,26 @@ const props = defineProps<CellDLViewerProps>()
 
 // Get the current Vue app instance to use some PrimeVue plugins and VueTippy.
 
-const crtInstance = vue.getCurrentInstance()
+const crtInstance = vue.getCurrentInstance();
 
-if (crtInstance !== null) {
-    const app = crtInstance.appContext.app
+if (crtInstance) {
+    const app = crtInstance.appContext.app;
 
-    if (app.config.globalProperties.$primevue === undefined) {
-        let options = {}
-
-        if (props.theme === 'light') {
-            options = {
-                darkModeSelector: false
-            }
-        } else if (props.theme === 'dark') {
-            document.documentElement.classList.add('viewer-dark-mode')
-            document.body.classList.add('viewer-dark-mode')
-
-            options = {
-                darkModeSelector: '.viewer-dark-mode'
-            }
-        }
-
+    if (!app.config.globalProperties.$primevue) {
         app.use(primeVueConfig as unknown as vue.Plugin, {
             theme: {
                 preset: primeVueAuraTheme,
-                options: options
+                options: {
+                    darkModeSelector: '.celldl-dark-mode'
+                }
             }
         })
-
     }
 
-    // Setup VueTippy
-
     app.use(vueTippy)
-
 }
 
-if (props.theme !== undefined) {
-    vueCommon.useTheme().setTheme(props.theme)
-}
+vueCommon.useTheme().setTheme(props.theme)
 
 //==============================================================================
 //==============================================================================
