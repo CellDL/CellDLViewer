@@ -29,6 +29,11 @@ import {
     CellDLUnconnectedPort
 } from '@viewer/celldlObjects'
 
+import {
+    CONNECTION_COLOUR,
+    OLD_CONNECTION_COLOUR
+} from '@viewer/common/styling'
+
 import type { Constructor } from '@viewer/common/types'
 
 import { lengthToPixels } from '@viewer/geometry/units'
@@ -158,6 +163,13 @@ export class CellDLModel {
                     svgDiagram.setAttribute('viewBox', `0 0 ${width} ${height}`)
                 }
             }
+        }
+        // Tweak the colour of <path> elements in existing CellDL files so they show
+        // better in dark mode.
+        const strokedPaths = svgDiagram.querySelectorAll(`path[stroke="${OLD_CONNECTION_COLOUR}"]`)
+        for (let index = 0; index < strokedPaths.length; ++index) {
+            const path = strokedPaths[index]
+            path.setAttribute('stroke', CONNECTION_COLOUR)
         }
         this.#svgDiagram = svgDiagram
     }

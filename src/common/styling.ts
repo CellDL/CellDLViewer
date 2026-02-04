@@ -27,6 +27,8 @@ export const CONNECTION_SPLAY_PADDING = 16 // If <= 1.0 then fraction of element
 export const MAX_CONNECTION_SPLAY_PADDING = 20 // pixels
 
 export const CONNECTION_COLOUR = '#456'
+export const OLD_CONNECTION_COLOUR = "#334155" // For auto update of `stroke` in <path> elements
+
 export const CONNECTION_WIDTH = 2 // pixels
 export const CONNECTION_DASH = 2  // * width
 
