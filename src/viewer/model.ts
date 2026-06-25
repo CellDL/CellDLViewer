@@ -20,6 +20,7 @@ limitations under the License.
 
 import {
     CellDLAnnotation,
+    CellDLCompartment,
     CellDLComponent,
     CellDLConduit,
     type CellDLConnectedObject,
@@ -99,6 +100,7 @@ export class CellDLModel {
         this.#loadConduits()
         this.#loadConnections()
         this.#loadAnnotations()
+        this.#loadAnnotatedSVGFeatures()
     }
 
     async viewModel() {
@@ -256,6 +258,30 @@ export class CellDLModel {
 
     #loadConnections() {
         this.#loadObject(CELLDL.uri('Connection'), CellDLConnection)
+    }
+
+    #loadAnnotatedSVGFeatures() {
+        // @ts-expect-error: we have an SVG diagram
+        const featuresWithId = this.#svgDiagram.querySelectorAll(`*[id]`)
+        for (let index = 0; index < featuresWithId.length; ++index) {
+            // @ts-expect-error: `index` is in range
+            const feature: SVGGraphicsElement = featuresWithId[index]
+            if (!this.#objects.has(feature.id)) {
+                // This must match CELLDL_STYLE_CLASS and CELLDL_CLASS_MAP in the Editor's code.
+                const CellDLClass = feature.classList.contains('celldl-Annotation') ? CellDLAnnotation
+                                  : feature.classList.contains('celldl-Compartment') ? CellDLCompartment
+                                  : feature.classList.contains('celldl-Component') ? CellDLComponent
+                                  : feature.classList.contains('celldl-Connection') ? CellDLConnection
+                                  : feature.classList.contains('celldl-InterfacePort') ? CellDLInterface
+                                  : feature.classList.contains('celldl-Unconnected') ? CellDLUnconnectedPort
+                                  : null
+                if (CellDLClass !== null) {
+                    const object = new CellDLClass(this.makeUri(feature.id), {}, this)
+                    object.assignSvgElement(feature)
+                    this.#addMoveableObject(object)
+                }
+            }
+        }
     }
 }
 
