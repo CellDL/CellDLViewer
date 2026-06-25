@@ -42,8 +42,7 @@ import * as $rdf from '@viewer/metadata'
 import {
     CELLDL,
     type NamedNode,
-    type MetadataPropertyValue,
-    RDF
+    type MetadataPropertyValue
 } from '@viewer/metadata'
 
 import type { CellDLViewer } from '.'
@@ -189,9 +188,6 @@ export class CellDLModel {
                     break
                 }
             }
-        }
-        if (!this.#kb.contains(this.#documentNode, RDF.uri('type'), CELLDL.uri('Document'))) {
-            throw new Error("Metadata doesn't describe a valid CellDL document")
         }
     }
 
