@@ -26,7 +26,6 @@ import { useTippy } from "vue-tippy"
 import '@viewer/assets/svgContent.css'
 
 import type { CellDLObject } from '@viewer/celldlObjects'
-import type { PointLike } from '@viewer/common/points'
 
 import type { CellDLModel } from './model'
 
@@ -150,11 +149,12 @@ export class CellDLViewer {
             this.#addPointerEventHandlers()
         }
         this.#celldlModel = celldlModel
-        this.#svgDiagram = celldlModel.svgDiagram!
+        this.#svgDiagram = celldlModel.svgDiagram
 
         // Show the model's diagram in the viewer's window
         if (this.#container) {
-            this.#container.appendChild(this.#svgDiagram!)
+            // @ts-expect-error: we have a SVG diagram
+            this.#container.appendChild(this.#svgDiagram)
         }
 
         // Allow for the diagram to render
@@ -164,6 +164,7 @@ export class CellDLViewer {
         celldlModel.finishSetup()
 
         // Enable pan/zoom and toolBars
+        // @ts-expect-error: we have a SVG diagram
         this.#panzoom?.enable(this.#svgDiagram)
 
         // Set initial state
@@ -284,7 +285,7 @@ export class CellDLViewer {
         this.#selectionClickEvent(event, element, clickedObject)
     }
 
-    #selectionClickEvent(event: MouseEvent, _element: SVGGraphicsElement, clickedObject: CellDLObject|null) {
+    #selectionClickEvent(_event: MouseEvent, _element: SVGGraphicsElement, clickedObject: CellDLObject|null) {
         let deselected = false
         if (this.#selectedObject !== null) {
             // Deselect
@@ -342,13 +343,15 @@ export class CellDLViewer {
         this.#pointerDownTime = Date.now()
         this.#svgDiagram?.style.removeProperty('cursor')
         this.#container?.style.setProperty('cursor', 'grab')
-        this.#panzoom!.pointerDown(event)
+        // @ts-expect-error: `panzoom` is defined
+        this.#panzoom.pointerDown(event)
         this.#panning = true
     }
 
     #pointerMoveEvent(event: PointerEvent) {
         if (this.#panning) {
-            this.#pointerMoved = this.#panzoom!.pointerMove(event) || this.#pointerMoved
+            // @ts-expect-error: `panzoom` is defined
+            this.#pointerMoved = this.#panzoom.pointerMove(event) || this.#pointerMoved
             return
         }
         this.#pointerMoved = true
@@ -359,7 +362,8 @@ export class CellDLViewer {
             return
         }
         if (this.#panning) {
-            this.#panzoom!.pointerUp(event)
+            // @ts-expect-error: `panzoom` is defined
+            this.#panzoom.pointerUp(event)
             this.#panning = false
             this.#setDefaultCursor()
             return

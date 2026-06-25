@@ -19,9 +19,9 @@ limitations under the License.
 ******************************************************************************/
 
 
+import { Point } from '@viewer/common/points'
 import { getViewbox } from '@viewer/common/svgUtils'
 import type { Extent } from '@viewer/geometry'
-import { Point } from '@viewer/common/points'
 
 //==============================================================================
 
@@ -62,11 +62,13 @@ export default class PanZoom {
     }
 
     #currentViewbox(): Extent {
-        return getViewbox(this.#svgDiagram!)
+        // @ts-expect-error: we have an SVG diagram
+        return getViewbox(this.#svgDiagram)
     }
 
     #setViewbox(viewbox: Extent) {
-        this.#svgDiagram!.setAttribute('viewBox', viewbox.map((n) => String(n)).join(' '))
+        // @ts-expect-error: we have an SVG diagram
+        this.#svgDiagram.setAttribute('viewBox', viewbox.map((n) => String(n)).join(' '))
     }
 
     enable(svgDiagram: SVGSVGElement) {
