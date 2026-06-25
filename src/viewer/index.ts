@@ -46,11 +46,20 @@ export function notifyChanges() {
 //==============================================================================
 
 export function getElementId(element: SVGGraphicsElement): string {
-    return element.dataset.parentId
-        ? element.dataset.parentId
-        : element.classList.contains('parent-id')
-          ? element.parentElement?.id || ''
-          : element.id
+    if (element.dataset.parentId) {
+        return element.dataset.parentId
+    } else if (element.classList.contains('parent-id')) {
+        return element.parentElement?.id || ''
+    }
+    while (element.tagName === 'text') {
+        const prevElement = element.previousElementSibling
+        if (prevElement) {
+            element = prevElement as SVGGraphicsElement
+        } else {
+            break
+        }
+    }
+    return element.id
 }
 
 //==============================================================================
