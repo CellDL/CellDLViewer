@@ -1,6 +1,7 @@
 # The CellDL Model Viewer
 
 The **CellDL Model Viewer** can be:
+
 1. Run as a standalone application in a Web browser (currently Chrome and Edge) to view CellDL files.
 2. Integrated into a web application as a [Vue 3](https://vuejs.org/) component.
 
