@@ -42,4 +42,4 @@ jobs:
 
       - name: Publish the CellDL Viewer on npm
         run: |
-          npm publish --access public --no-git-checks
+          npm publish --access public
