@@ -32,7 +32,8 @@ jobs:
         # https://docs.npmjs.com/trusted-publishers).
         run: npm install -g npm@latest
       - name: Install bun
-        run: npm install -g bun
+        run: |
+          npm install -g --allow-scripts=bun bun
 
       - name: Build the CellDL Viewer as a component
         run: |
