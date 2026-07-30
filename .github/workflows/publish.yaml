@@ -1,5 +1,7 @@
 name: Publish the CellDL Model Viewer as a npm package
 on:
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
