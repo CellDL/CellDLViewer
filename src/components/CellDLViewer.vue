@@ -1,24 +1,16 @@
 <template lang="pug">
-    .flex.flex-col.h-full
-        main.viewer-pane.relative.flex.grow
-            div#svg-content(ref="svgContent")
+    div(ref="svgContent")
 </template>
 
 <script setup lang="ts">
 import * as vue from 'vue'
 import * as vueusecore from '@vueuse/core'
 
-import primeVueAuraTheme from '@primeuix/themes/aura'
-import primeVueConfig from 'primevue/config'
-
 import vueTippy from 'vue-tippy'
 import 'tippy.js/dist/tippy.css'
 
 //==============================================================================
 
-import '@viewer/assets/style.css'
-
-import * as vueCommon from '@viewer/common/vueCommon'
 import { CellDLModel } from '@viewer/viewer/model'
 import { CellDLViewer } from '@viewer/viewer'
 
@@ -38,30 +30,8 @@ const crtInstance = vue.getCurrentInstance();
 if (crtInstance) {
     const app = crtInstance.appContext.app;
 
-    if (!app.config.globalProperties.$primevue) {
-        app.use(primeVueConfig as unknown as vue.Plugin, {
-            theme: {
-                preset: primeVueAuraTheme,
-                options: {
-                    darkModeSelector: '.celldl-dark-mode'
-                }
-            }
-        })
-    }
-
     app.use(vueTippy)
 }
-
-vueCommon.useTheme().setTheme(props.theme)
-
-//==============================================================================
-
-vue.watch(
-    () => props.theme,
-    () => {
-        vueCommon.useTheme().setTheme(props.theme)
-    }
-)
 
 //==============================================================================
 //==============================================================================
@@ -121,15 +91,3 @@ vueusecore.useEventListener(document, 'viewer-event', (event: CustomEvent) => {
 //==============================================================================
 //==============================================================================
 </script>
-
-<style scoped>
-.viewer-pane {
-    min-height: 100%;
-}
-#svg-content {
-    margin:  0;
-    border: 2px solid grey;
-    flex: 1;
-    overflow: hidden;
-}
-</style>

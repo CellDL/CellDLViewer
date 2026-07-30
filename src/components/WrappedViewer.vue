@@ -1,5 +1,5 @@
 <template lang="pug">
-    CellDLViewer.grow(
+    CellDLViewer(
         :annotations="annotations"
         :celldlData="celldlData"
         :options="options"
