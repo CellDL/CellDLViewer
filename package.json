@@ -38,15 +38,15 @@
         "./style.css": "./dist/CellDLViewer.css"
     },
     "scripts": {
-        "build": "vite --config vite.config.ts build app",
         "build:dev": "vite --config vite.config.ts build app --base /",
-        "build:lib": "vite build --config vite.lib.config.ts && cp index.d.ts dist/index.d.ts",
+        "build": "bun oxigraph:check && vite --config vite.config.ts build app",
+        "build:lib": "bun oxigraph:check && vite build --config vite.lib.config.ts && cp index.d.ts dist/index.d.ts",
         "clean": "bun scripts/clean.js",
-        "dev": "vite --config vite.config.ts app",
+        "dev": "bun oxigraph:check && vite --config vite.config.ts app",
         "format": "bunx --bun biome format --fix --max-diagnostics=none",
         "format:check": "bunx --bun biome format --max-diagnostics=none",
         "lint": "bunx --bun biome lint --fix --error-on-warnings --max-diagnostics=none",
-        "postinstall": "bash ./scripts/postinstall.sh",
+        "oxigraph:check": "bun ./scripts/check-oxigraph.ts",
         "start": "bun run build && vite preview",
         "version:new": "bun scripts/version.js"
     },
