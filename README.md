@@ -5,11 +5,19 @@ The **CellDL Model Viewer** can be:
 1. Run as a standalone application in a Web browser (currently Chrome and Edge) to view CellDL files.
 2. Integrated into a web application as a [Vue 3](https://vuejs.org/) component.
 
-## Usage as a Vue 3 component
+## As a Vue 3 component
+
+### Installation:
+
+```bash
+npm install @celldl/viewer
+```
+
+### Usage:
 
 - **index.html:**
 
-The `Content-Security-Policy` **must** allow `data:` connections and Wasm to be evaluated, for instance:
+The `Content-Security-Policy` **must** allow `data:` connections and Web Assembly to be evaluated, for instance:
 
 ```html
     <meta
@@ -44,10 +52,10 @@ createApp(App).mount('#app');
 import * as vue from 'vue';
 import * as vueusecore from '@vueuse/core';
 
-import '@abi-software/celldl-viewer/style.css';
+import '@celldl/viewer/style.css';
 
-import CellDLViewer from '@abi-software/celldl-viewer'
-import type { Annotations, Theme, ViewerEvent } from '@abi-software/celldl-viewer'
+import CellDLViewer from '@celldl/viewer'
+import type { Annotations, Theme, ViewerEvent } from '@celldl/viewer'
 
 const annotations = vue.ref<Annotations>({})
 
