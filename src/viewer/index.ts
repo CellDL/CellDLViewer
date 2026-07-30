@@ -112,36 +112,6 @@ export class CellDLViewer {
             this.#tooltip = tippy
             this.#tooltipElement = this.#tooltip.value.popper
         }
-
-        // Handle context menu events
-        this.#container.addEventListener('contextmenu', (event) => {
-            if (this.#celldlModel) {
-                const element = event.target as SVGGraphicsElement
-                const clickedObject = this.#celldlModel.objectById(getElementId(element))
-                if (clickedObject && clickedObject === this.#activeObject) {
-                    this.#setSelectedObject(clickedObject)
-                }
-
-                document.dispatchEvent(new CustomEvent('open-context-menu', {
-                    detail: {
-//                      state: this.#contextMenuActiveItems,
-                        event: event
-                    }
-                }))
-
-            }
-        })
-
-        document.addEventListener('context-menu-click', (event: Event) => {
-            const eventId = (<CustomEvent>event).detail.id
-            // Only action is Annotate?
-            // Or also Info ??
-            if (eventId === 'annotate') {
-                //
-            } else if (eventId === 'info') {
-                //this.#showSelectedObjectInfo()
-            }
-        })
     }
 
     #addPointerEventHandlers() {

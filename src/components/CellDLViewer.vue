@@ -2,9 +2,6 @@
     .flex.flex-col.h-full
         main.viewer-pane.relative.flex.grow
             div#svg-content(ref="svgContent")
-                ContextMenu(
-                    ref="context-menu" :model="contextMenuItems"
-                )
 </template>
 
 <script setup lang="ts">
