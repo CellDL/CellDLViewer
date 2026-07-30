@@ -37,6 +37,10 @@ createApp(App).mount('#app');
 
 - **App.vue:**
 
+> **Note:**
+> No styles, including defining a width and height, are applied to the CellDLViewer component, as this is expected to be provided by parent component(s). If the component has zero width or height an error is logged and no content is shown.
+
+
 ```vue
 <template>
   <CellDLViewer
