@@ -34,6 +34,7 @@ export default class PanZoom {
     #containerOrigin: Point = new Point()
     #containerSize: Point = new Point()
     #resizeObserver: ResizeObserver
+    #validContainer: boolean = true
 
     #minScale: number = 0.125
     #scale: number = 1
@@ -48,6 +49,10 @@ export default class PanZoom {
             container.offsetLeft + container.clientLeft,
             container.offsetTop + container.clientTop
         )
+        if (container.clientWidth === 0 || container.clientHeight === 0) {
+            console.error('Container for viewer has no size...')
+            this.#validContainer = false
+        }
         this.#containerSize = new Point(container.clientWidth, container.clientHeight)
         this.#resizeObserver = new ResizeObserver(this.#resizeObservation.bind(this))
         this.#resizeObserver.observe(container)
@@ -72,6 +77,9 @@ export default class PanZoom {
     }
 
     enable(svgDiagram: SVGSVGElement) {
+        if (!this.#validContainer) {
+            return
+        }
         // Scale large diagrams down to fit container
         let viewbox = getViewbox(svgDiagram)
         if (viewbox[2] * this.#containerSize.y >= viewbox[3] * this.#containerSize.x) {
