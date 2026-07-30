@@ -50,7 +50,6 @@ createApp(App).mount('#app');
 
 <script setup lang="ts">
 import * as vue from 'vue';
-import * as vueusecore from '@vueuse/core';
 
 import '@celldl/viewer/style.css';
 
