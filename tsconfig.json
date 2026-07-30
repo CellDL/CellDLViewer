@@ -6,6 +6,7 @@
         "module": "esnext",
         "moduleResolution": "bundler",
         "noEmit": false,
+        "outDir": "./dist",
         "strictNullChecks": true,
         "resolveJsonModule": true,
         "target": "esnext",

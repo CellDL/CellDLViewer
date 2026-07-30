@@ -13,6 +13,7 @@ dist
 dist-ssr
 coverage
 out
+.rollup.cache
 *.local
 
 # Editor directories and files
