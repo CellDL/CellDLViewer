@@ -58,7 +58,6 @@ export default vite.defineConfig({
     resolve: {
         alias: {
             'node-fetch': 'isomorphic-fetch',
-            '@viewer': path.resolve(_dirname, 'src')
         }
     },
     plugins: [
