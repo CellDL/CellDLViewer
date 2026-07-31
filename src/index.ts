@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-import CellDLViewer from './components/CellDLViewer.vue'
+import CellDLViewer from './components/ViewerComponent.vue'
 
 //==============================================================================
 
