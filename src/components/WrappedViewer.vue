@@ -51,34 +51,35 @@ const emit = defineEmits<{
 
 //==============================================================================
 
+const showDiagram = async () => {
+    if (props.celldlData === '') {
+        celldlModel = new CellDLModel(celldlViewer)
+        await celldlModel.viewModel()
+    } else {
+        try {
+            celldlModel = new CellDLModel(celldlViewer, props.celldlData, props.annotations, props.options)
+            await celldlModel.viewModel()
+        } catch(err) {
+            emit('error', `Invalid CellDL file... (${err})`)
+        }
+    }
+}
+
+//==============================================================================
+
 vue.watch(
     () => props.celldlData,
     async () => {
-        if (props.celldlData === '') {
-            celldlModel = new CellDLModel(celldlViewer)
-            await celldlModel.viewModel()
-        } else {
-            try {
-                celldlModel = new CellDLModel(celldlViewer, props.celldlData, props.annotations, props.options)
-                await celldlModel.viewModel()
-            } catch(err) {
-                emit('error', `Invalid CellDL file... (${err})`)
-            }
-        }
+        await showDiagram()
     }
 )
 
 //==============================================================================
 
 vue.onMounted(async () => {
-
     if (svgContent.value) {
         celldlViewer.mount(svgContent.value)
-
-        // Create a new model in the viewer's window
-        celldlModel = new CellDLModel(celldlViewer)
-
-        await celldlModel.viewModel()
+        await showDiagram()
     }
 })
 
