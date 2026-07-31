@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type * as $oxigraph from '@oxigraph/web'
+import type * as $oxigraph from 'oxigraph/web'
 
 import { write as prettyTurtle } from '@jeswr/pretty-turtle'
 

@@ -58,7 +58,6 @@ export default vite.defineConfig({
     resolve: {
         alias: {
             'node-fetch': 'isomorphic-fetch',
-            '@oxigraph': path.resolve(_dirname, 'src/assets/oxigraph'),
             '@viewer': path.resolve(_dirname, 'src')
         }
     },

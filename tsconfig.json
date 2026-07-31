@@ -11,7 +11,6 @@
         "target": "esnext",
         "types": ["vite/client"],
         "paths": {
-            "@oxigraph/*": ["./src/assets/oxigraph/*"],
             "@viewer/*": ["./src/*"]
         }
     },
