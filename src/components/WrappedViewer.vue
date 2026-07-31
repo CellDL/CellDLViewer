@@ -33,6 +33,9 @@ if (crtInstance) {
     app.use(vueTippy)
 }
 
+// @ts-expect-error: the instance's type has a `__scopeId`
+const scopeId: string = crtInstance?.type.__scopeId || ''
+
 //==============================================================================
 //==============================================================================
 
@@ -78,7 +81,7 @@ vue.watch(
 
 vue.onMounted(async () => {
     if (svgContent.value) {
-        celldlViewer.mount(svgContent.value)
+        celldlViewer.mount(svgContent.value, scopeId)
         await showDiagram()
     }
 })
@@ -92,3 +95,7 @@ vueusecore.useEventListener(document, 'viewer-event', (event: CustomEvent) => {
 //==============================================================================
 //==============================================================================
 </script>
+
+<style scoped>
+@import '../assets/svgContent.css'
+</style>

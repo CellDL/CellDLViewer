@@ -23,8 +23,6 @@ import { useTippy } from "vue-tippy"
 
 //==============================================================================
 
-import '../assets/svgContent.css'
-
 import type { CellDLObject } from '../celldlObjects'
 
 import type { CellDLModel } from './model'
@@ -71,6 +69,7 @@ export class CellDLViewer {
 
     #container: HTMLElement | null = null
     #celldlModel: CellDLModel | null = null
+    #scopeId: string = ''
     #svgDiagram: SVGSVGElement | null = null
 
     #panning: boolean = false
@@ -90,8 +89,9 @@ export class CellDLViewer {
         CellDLViewer.instance = this
     }
 
-    mount(svgContainer: HTMLElement) {
+    mount(svgContainer: HTMLElement, scopeId: string) {
         this.#container = svgContainer
+        this.#scopeId = scopeId
 
         // Create a panzoom handler
         this.#panzoom = new PanZoom(this.#container)
@@ -171,6 +171,15 @@ export class CellDLViewer {
 
         // Finish setting up the model as we now have SVG elements
         celldlModel.finishSetup()
+
+        // Local styles are scoped, so assign the Vue component's scopeId
+        // to the diagram and its newly added interactive elements
+        if (this.#scopeId !== '') {
+            this.#svgDiagram?.setAttribute(this.#scopeId, '')
+            this.#svgDiagram?.querySelectorAll('*').forEach(child => {
+                child.setAttribute(this.#scopeId, '')
+            })
+        }
 
         // Enable pan/zoom and toolBars
         // @ts-expect-error: we have a SVG diagram
