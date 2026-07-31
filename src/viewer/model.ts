@@ -28,23 +28,23 @@ import {
     CellDLInterface,
     type CellDLObject,
     CellDLUnconnectedPort
-} from '@viewer/celldlObjects'
+} from '../celldlObjects'
 
 import {
     CONNECTION_COLOUR,
     OLD_CONNECTION_COLOUR
-} from '@viewer/common/styling'
+} from '../common/styling'
 
-import type { Constructor } from '@viewer/common/types'
+import type { Constructor } from '../common/types'
 
-import { lengthToPixels } from '@viewer/geometry/units'
+import { lengthToPixels } from '../geometry/units'
 
-import * as $rdf from '@viewer/metadata'
+import * as $rdf from '../metadata'
 import {
     CELLDL,
     type NamedNode,
     type MetadataPropertyValue
-} from '@viewer/metadata'
+} from '../metadata'
 
 import type { CellDLViewer } from '.'
 

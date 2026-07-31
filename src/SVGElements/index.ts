@@ -19,13 +19,13 @@ limitations under the License.
 ******************************************************************************/
 
 
-import { CELLDL_CLASS, type CellDLObject } from '@viewer/celldlObjects'
-import { Point, type PointLike } from '@viewer/common/points'
-import { CONNECTION_WIDTH, SELECTION_STROKE_WIDTH } from '@viewer/common/styling'
-import { svgCircle } from '@viewer/common/svgUtils'
-import { Bounds } from '@viewer/geometry'
-import { FixedControlRect }from '@viewer/geometry/controls'
-import { Transform } from '@viewer/geometry/transforms'
+import { CELLDL_CLASS, type CellDLObject } from '../celldlObjects'
+import { Point, type PointLike } from '../common/points'
+import { CONNECTION_WIDTH, SELECTION_STROKE_WIDTH } from '../common/styling'
+import { svgCircle } from '../common/svgUtils'
+import { Bounds } from '../geometry'
+import { FixedControlRect } from '../geometry/controls'
+import { Transform } from '../geometry/transforms'
 
 
 const CONDUIT_SELECTION_RADIUS = 9

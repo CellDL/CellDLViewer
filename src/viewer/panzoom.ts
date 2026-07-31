@@ -19,9 +19,9 @@ limitations under the License.
 ******************************************************************************/
 
 
-import { Point } from '@viewer/common/points'
-import { getViewbox } from '@viewer/common/svgUtils'
-import type { Extent } from '@viewer/geometry'
+import { Point } from '../common/points'
+import { getViewbox } from '../common/svgUtils'
+import type { Extent } from '../geometry'
 
 //==============================================================================
 

@@ -11,12 +11,12 @@ import 'tippy.js/dist/tippy.css'
 
 //==============================================================================
 
-import { CellDLModel } from '@viewer/viewer/model'
-import { CellDLViewer } from '@viewer/viewer'
+import { CellDLModel } from '../viewer/model'
+import { CellDLViewer } from '../viewer'
 
 //==============================================================================
 
-import type { CellDLViewerProps, ViewerEvent } from '../../index'
+import type { CellDLViewerProps, ViewerEvent } from '../index'
 
 const props = defineProps<CellDLViewerProps>()
 

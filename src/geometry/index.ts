@@ -18,9 +18,9 @@ limitations under the License.
 
 ******************************************************************************/
 
-import { Point, type PointLike } from '@viewer/common/points'
-import type { Transform } from '@viewer/geometry/transforms'
-import { round } from '@viewer/utils'
+import { Point, type PointLike } from '../common/points'
+import type { Transform } from '../geometry/transforms'
+import { round } from '../utils'
 
 //==============================================================================
 

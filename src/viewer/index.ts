@@ -23,9 +23,9 @@ import { useTippy } from "vue-tippy"
 
 //==============================================================================
 
-import '@viewer/assets/svgContent.css'
+import '../assets/svgContent.css'
 
-import type { CellDLObject } from '@viewer/celldlObjects'
+import type { CellDLObject } from '../celldlObjects'
 
 import type { CellDLModel } from './model'
 

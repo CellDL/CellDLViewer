@@ -32,7 +32,7 @@ import {
 
 //==============================================================================
 
-import { Point, type PointLike } from '@viewer/common/points'
+import { Point, type PointLike } from '../common/points'
 
 //==============================================================================
 

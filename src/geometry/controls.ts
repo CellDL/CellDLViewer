@@ -18,10 +18,10 @@ limitations under the License.
 
 ******************************************************************************/
 
-import { Point, PointMath } from '@viewer/common/points'
-import { svgRect } from '@viewer/common/svgUtils'
-import type { StringProperties } from '@viewer/common/types'
-import { FixedPoint, FixedValue } from '@viewer/geometry'
+import { Point, PointMath } from '../common/points'
+import { svgRect } from '../common/svgUtils'
+import type { StringProperties } from '../common/types'
+import { FixedPoint, FixedValue } from '../geometry'
 
 import { RestrictedPoint } from '.'
 

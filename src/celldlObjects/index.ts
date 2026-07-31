@@ -18,11 +18,11 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { PropertiesType } from '@viewer/common/types'
-import { CELLDL, type NamedNode } from '@viewer/metadata'
-import type { CellDLSVGElement } from '@viewer/SVGElements'
-import { BoundedElement } from '@viewer/SVGElements/boundedelement'
-import type { CellDLModel } from '@viewer/viewer/model'
+import type { PropertiesType } from '../common/types'
+import { CELLDL, type NamedNode } from '../metadata'
+import type { CellDLSVGElement } from '../SVGElements'
+import { BoundedElement } from '../SVGElements/boundedelement'
+import type { CellDLModel } from '../viewer/model'
 
 //==============================================================================
 

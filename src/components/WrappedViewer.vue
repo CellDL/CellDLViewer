@@ -18,8 +18,8 @@ const props = defineProps<CellDLViewerProps>()
 
 // Load oxigraph's WASM module before the editor is imported
 
-import initOxigraph from '@oxigraph/web.js'
-import * as oxigraph from '@oxigraph/web.js'
+import initOxigraph from 'oxigraph/web.js'
+import * as oxigraph from 'oxigraph/web.js'
 
 const CellDLViewer = vue.defineAsyncComponent(async () => {
     const wasm = await initOxigraph()

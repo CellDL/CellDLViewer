@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { Pair } from '@viewer/common/types'
+import type { Pair } from './common/types'
 
 //==============================================================================
 

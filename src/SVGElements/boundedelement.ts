@@ -18,9 +18,9 @@ limitations under the License.
 
 ******************************************************************************/
 
-import type { CellDLObject } from '@viewer/celldlObjects'
-import { RestrictedPoint } from '@viewer/geometry'
-import { ControlRect } from '@viewer/geometry/controls'
+import type { CellDLObject } from '../celldlObjects'
+import { RestrictedPoint } from '../geometry'
+import { ControlRect } from '../geometry/controls'
 
 import { CellDLSVGElement } from '.'
 
