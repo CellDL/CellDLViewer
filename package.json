@@ -50,8 +50,6 @@
         "version:new": "bun scripts/version.js"
     },
     "peerDependencies": {
-        "@primeuix/themes": "^2.0.2",
-        "primevue": "4.2.5",
         "vue": "3.4.21"
     },
     "dependencies": {
