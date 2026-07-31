@@ -39,7 +39,7 @@
     },
     "scripts": {
         "build": "bun oxigraph:check && vite --config vite.config.ts build app",
-        "build:lib": "bun oxigraph:check && vite build --config vite.lib.config.ts && cp index.d.ts dist/index.d.ts",
+        "build:lib": "bun oxigraph:check && vite build --config vite.lib.config.ts && cp src/index.d.ts dist/index.d.ts",
         "clean": "bun scripts/clean.js",
         "dev": "bun oxigraph:check && vite --config vite.config.ts app",
         "format": "bunx --bun biome format --fix --max-diagnostics=none",

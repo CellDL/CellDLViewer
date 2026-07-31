@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import * as vue from 'vue'
 
-import type { CellDLViewerProps, ViewerEvent } from '../../index'
+import type { CellDLViewerProps, ViewerEvent } from '../index'
 
 const props = defineProps<CellDLViewerProps>()
 

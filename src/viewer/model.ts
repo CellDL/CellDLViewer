@@ -48,7 +48,7 @@ import {
 
 import type { CellDLViewer } from '.'
 
-import type { Annotations, Annotation, ModelViewerOptions, ViewerEvent } from '../../index'
+import type { Annotations, Annotation, ModelViewerOptions, ViewerEvent } from '../index'
 
 //==============================================================================
 //==============================================================================

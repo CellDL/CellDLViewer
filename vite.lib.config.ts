@@ -16,7 +16,7 @@ export default vite.defineConfig({
     ],
     build: {
         lib: {
-            entry: './index.ts',
+            entry: './src/index.ts',
             fileName: (format: string) => `CellDLViewer.${format}.js`,
             formats: ['es'],
             name: 'CellDLViewer'
@@ -39,7 +39,6 @@ export default vite.defineConfig({
             plugins: [
                 typescript({
                     include: [
-                        './index.ts',
                         'src/**'
                     ]
                 }),

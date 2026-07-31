@@ -1,6 +1,6 @@
 import { Component } from 'vue'
 
-import type { Annotations, AnnotationValue, CellDLViewerProps, ModelViewerOptions, ViewerEvent } from './index.ts'
+import type { Annotations, AnnotationValue, CellDLViewerProps, ModelViewerOptions, ViewerEvent } from './index'
 export type { Annotations, AnnotationValue, CellDLViewerProps, ModelViewerOptions, ViewerEvent }
 
 export declare const CellDLViewer: Component<CellDLViewerProps>

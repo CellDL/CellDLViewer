@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-import CellDLViewer from '@viewer/components/WrappedViewer.vue'
+import CellDLViewer from './components/WrappedViewer.vue'
 
 //==============================================================================
 

@@ -49,8 +49,8 @@ import '../assets/app.css'
 
 import AboutDialog from './AboutDialog.vue'
 
-import CellDLViewer from '../../../index'
-import type { Annotations, Theme, ViewerEvent } from '../../../index'
+import CellDLViewer from '../../../src/index'
+import type { Annotations, Theme, ViewerEvent } from '../../../src/index'
 
 import * as vueCommon from '@viewer/common/vueCommon'
 
