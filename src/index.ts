@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-import CellDLViewer from './components/ViewerComponent.vue'
+import SvgViewer from './components/ViewerComponent.vue'
 
 //==============================================================================
 
@@ -26,22 +26,22 @@ export type Theme = 'light' | 'dark' | 'system';
 
 //==============================================================================
 
-export { CellDLViewer }
-export default CellDLViewer
+export { SvgViewer }
+export default SvgViewer
 
 export type AnnotationValue = string|number|boolean|object
 export type Annotation = Record<string, AnnotationValue>
 
 export type Annotations = Record<string, Annotation>
 
-export type ModelViewerOptions = {
+export type SvgViewerOptions = {
     tooltip?: string
 }
 
-export interface CellDLViewerProps {
+export interface SvgViewerProps {
     annotations?: Annotations
-    celldlData: string
-    options?: ModelViewerOptions
+    svgData: string
+    options?: SvgViewerOptions
     theme?: Theme
 }
 

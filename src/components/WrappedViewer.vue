@@ -16,9 +16,9 @@ import { CellDLViewer } from '../viewer'
 
 //==============================================================================
 
-import type { CellDLViewerProps, ViewerEvent } from '../index'
+import type { SvgViewerProps, ViewerEvent } from '../index'
 
-const props = defineProps<CellDLViewerProps>()
+const props = defineProps<SvgViewerProps>()
 
 //==============================================================================
 //==============================================================================
@@ -52,12 +52,12 @@ const emit = defineEmits<{
 //==============================================================================
 
 const showDiagram = async () => {
-    if (props.celldlData === '') {
+    if (props.svgData === '') {
         celldlModel = new CellDLModel(celldlViewer)
         await celldlModel.viewModel()
     } else {
         try {
-            celldlModel = new CellDLModel(celldlViewer, props.celldlData, props.annotations, props.options)
+            celldlModel = new CellDLModel(celldlViewer, props.svgData, props.annotations, props.options)
             await celldlModel.viewModel()
         } catch(err) {
             emit('error', `Invalid CellDL file... (${err})`)
@@ -68,7 +68,7 @@ const showDiagram = async () => {
 //==============================================================================
 
 vue.watch(
-    () => props.celldlData,
+    () => props.svgData,
     async () => {
         await showDiagram()
     }

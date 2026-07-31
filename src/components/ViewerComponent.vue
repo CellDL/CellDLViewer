@@ -1,7 +1,7 @@
 <template>
     <WrappedViewer
         :annotations="annotations"
-        :celldlData="celldlData"
+        :svgData="svgData"
         :options="options"
         :theme="theme"
         @error="onError"
@@ -12,9 +12,9 @@
 <script setup lang="ts">
 import * as vue from 'vue'
 
-import type { CellDLViewerProps, ViewerEvent } from '../index'
+import type { SvgViewerProps, ViewerEvent } from '../index'
 
-const props = defineProps<CellDLViewerProps>()
+const props = defineProps<SvgViewerProps>()
 
 // Load oxigraph's WASM module before the editor is imported
 

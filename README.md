@@ -43,9 +43,9 @@ createApp(App).mount('#app');
 
 ```vue
 <template>
-  <CellDLViewer
+  <SvgViewer
     :annotations="annotations"
-    :celldlData="celldlData"
+    :svgData="svgData"
     :theme="theme"
     @error="onError"
     @event="onEvent"
@@ -57,7 +57,7 @@ import * as vue from 'vue';
 
 import '@celldl/viewer/style.css';
 
-import CellDLViewer from '@celldl/viewer'
+import SvgViewer from '@celldl/viewer'
 import type { Annotations, Theme, ViewerEvent } from '@celldl/viewer'
 
 const annotations = vue.ref<Annotations>({})

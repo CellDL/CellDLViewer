@@ -16,9 +16,9 @@
                     size="small"
                     @change="onDarkMode"
                 )
-            CellDLViewer.grow(
+            SvgViewer.grow(
                 :annotations="annotations"
-                :celldlData="celldlData"
+                :svgData="svgData"
                 :theme="theme"
                 @error="onError"
                 @event="onEvent"
@@ -49,7 +49,7 @@ import '../assets/app.css'
 
 import AboutDialog from './AboutDialog.vue'
 
-import CellDLViewer from '../../../src/index'
+import SvgViewer from '../../../src/index'
 import type { Annotations, Theme, ViewerEvent } from '../../../src/index'
 
 import * as vueCommon from '@viewer/common/vueCommon'
@@ -103,7 +103,7 @@ function onDarkMode() {
 
 const annotations = vue.ref<Annotations>({})
 
-const celldlData = vue.ref<string>('')
+const svgData = vue.ref<string>('')
 
 const windowTitle = vue.ref<string>('')
 
@@ -130,7 +130,7 @@ async function onOpenFile() {
         if (currentFileHandle) {
             const file = await currentFileHandle.getFile()
             const contents = await file.text()
-            celldlData.value = contents
+            svgData.value = contents
             haveFile.value = true
             windowTitle.value = currentFileHandle.name
         }
@@ -141,7 +141,7 @@ async function onOpenFile() {
 
 function onCloseFile() {
     currentFileHandle = undefined
-    celldlData.value = ''
+    svgData.value = ''
     haveFile.value = false
     windowTitle.value = ''
 }
