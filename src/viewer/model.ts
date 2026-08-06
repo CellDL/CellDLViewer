@@ -48,7 +48,7 @@ import {
 
 import type { CellDLViewer } from '.'
 
-import type { Annotations, Annotation, ModelViewerOptions, ViewerEvent } from '../index'
+import type { Annotations, Annotation, SvgViewerOptions, ViewerEvent } from '../index'
 
 //==============================================================================
 //==============================================================================
@@ -72,7 +72,7 @@ export class CellDLModel {
     #objects: Map<string, CellDLObject> = new Map()
 
     constructor(celldlViewer: CellDLViewer, celldlData: string='', annotations: Annotations={},
-                options: ModelViewerOptions|undefined=undefined) {
+                options: SvgViewerOptions|undefined=undefined) {
         this.#celldlViewer = celldlViewer
         this.#documentNode = $rdf.namedNode(VIEWER_DIAGRAM_URI)
         this.#documentNS = new $rdf.Namespace(`${VIEWER_DIAGRAM_URI}#`)
