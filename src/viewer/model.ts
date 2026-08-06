@@ -70,6 +70,7 @@ export class CellDLModel {
 
     #annotations: Map<string, Annotation> = new Map()
     #objects: Map<string, CellDLObject> = new Map()
+    #tooltipField: string|undefined = undefined
 
     constructor(celldlViewer: CellDLViewer, celldlData: string='', annotations: Annotations={},
                 options: SvgViewerOptions|undefined=undefined) {
@@ -79,17 +80,7 @@ export class CellDLModel {
         if (celldlData !== '') {
             this.#loadSvgDiagram(celldlData)
             this.#loadMetadata()
-            const tooltipField = options ? options.tooltip : undefined
-            for (const object of this.#objects.values()) {
-                if (object.id in annotations) {
-                    // @ts-expect-error: objectId is in annotations
-                    const annotation: Annotation = annotations[object.id]
-                    this.#annotations.set(object.id, annotation)
-                    if (tooltipField && tooltipField in annotation) {
-                        object.tooltip = String(annotation[tooltipField])
-                    }
-                }
-            }
+            this.#tooltipField = options?.tooltip
         }
     }
 
@@ -101,6 +92,8 @@ export class CellDLModel {
         this.#loadConnections()
         this.#loadAnnotations()
         this.#loadAnnotatedSVGFeatures()
+
+        this.#setTooltips()
     }
 
     async viewModel() {
@@ -202,6 +195,19 @@ export class CellDLModel {
         }
         console.error(`Missing SVG element for ${celldlObject.id}`)
         return false
+    }
+
+    #setTooltips() {
+        for (const object of this.#objects.values()) {
+            if (object.id in annotations) {
+                // @ts-expect-error: objectId is in annotations
+                const annotation: Annotation = annotations[object.id]
+                this.#annotations.set(object.id, annotation)
+                if (this.#tooltipField && this.#tooltipField in annotation) {
+                    object.tooltip = String(annotation[this.#tooltipField])
+                }
+            }
+        }
     }
 
     #celldlObjectFromRdf<T extends CellDLObject>(CellDLClass: Constructor<T>, subject: $rdf.SubjectType): T {
