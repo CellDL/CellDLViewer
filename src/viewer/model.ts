@@ -43,7 +43,8 @@ import * as $rdf from '../metadata'
 import {
     CELLDL,
     type NamedNode,
-    type MetadataPropertyValue
+    type MetadataPropertyValue,
+    RDF
 } from '../metadata'
 
 import type { CellDLViewer } from '.'
@@ -79,7 +80,7 @@ export class CellDLModel {
         this.#documentNS = new $rdf.Namespace(`${VIEWER_DIAGRAM_URI}#`)
         if (celldlData !== '') {
             this.#loadSvgDiagram(celldlData)
-            this.#loadMetadata()
+            this.#loadMetadata(annotations)
             this.#tooltipField = options?.tooltip
         }
     }
@@ -169,7 +170,7 @@ export class CellDLModel {
         this.#svgDiagram = svgDiagram
     }
 
-    #loadMetadata() {
+    #loadMetadata(annotations: Annotations) {
         const metadataElement = this.#svgDiagram?.getElementById(CELLDL_METADATA_ID) as SVGMetadataElement
         if (
             metadataElement &&
@@ -182,6 +183,16 @@ export class CellDLModel {
                 if (childNode.nodeName === '#cdata-section') {
                     this.#kb.load(this.#documentNode.uri, (<CDATASection>childNode).data, $rdf.TurtleContentType)
                     break
+                }
+            }
+        } else {
+            for (const [objectId, annotation] of Object.entries(annotations)) {
+                if (this.#svgDiagram?.getElementById(objectId)) {
+                    const celldlType = ('type' in annotation)
+                                        ? String(annotation.type)
+                                     : 'Component'
+                    this.#kb.add($rdf.namedNode(`${this.#documentNode.uri}#${objectId}`),
+                                    RDF.uri('type'), CELLDL.uri(celldlType))
                 }
             }
         }
