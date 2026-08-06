@@ -78,9 +78,10 @@ export class CellDLModel {
         this.#celldlViewer = celldlViewer
         this.#documentNode = $rdf.namedNode(VIEWER_DIAGRAM_URI)
         this.#documentNS = new $rdf.Namespace(`${VIEWER_DIAGRAM_URI}#`)
+        this.#annotations = new Map(Object.entries(annotations))
         if (celldlData !== '') {
             this.#loadSvgDiagram(celldlData)
-            this.#loadMetadata(annotations)
+            this.#loadMetadata()
             this.#tooltipField = options?.tooltip
         }
     }
@@ -170,7 +171,7 @@ export class CellDLModel {
         this.#svgDiagram = svgDiagram
     }
 
-    #loadMetadata(annotations: Annotations) {
+    #loadMetadata() {
         const metadataElement = this.#svgDiagram?.getElementById(CELLDL_METADATA_ID) as SVGMetadataElement
         if (
             metadataElement &&
@@ -186,7 +187,7 @@ export class CellDLModel {
                 }
             }
         } else {
-            for (const [objectId, annotation] of Object.entries(annotations)) {
+            for (const [objectId, annotation] of this.#annotations.entries()) {
                 if (this.#svgDiagram?.getElementById(objectId)) {
                     const celldlType = ('type' in annotation)
                                         ? String(annotation.type)
@@ -210,13 +211,9 @@ export class CellDLModel {
 
     #setTooltips() {
         for (const object of this.#objects.values()) {
-            if (object.id in annotations) {
-                // @ts-expect-error: objectId is in annotations
-                const annotation: Annotation = annotations[object.id]
-                this.#annotations.set(object.id, annotation)
-                if (this.#tooltipField && this.#tooltipField in annotation) {
-                    object.tooltip = String(annotation[this.#tooltipField])
-                }
+            const annotation = this.#annotations.get(object.id)
+            if (annotation && this.#tooltipField && this.#tooltipField in annotation) {
+                object.tooltip = String(annotation[this.#tooltipField])
             }
         }
     }
